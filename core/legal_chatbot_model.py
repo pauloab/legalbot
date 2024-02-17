@@ -29,15 +29,14 @@ class LegalChatbotModel:
 
     def get_next_prompt(self, query: str):
         docs_prompt = self.__document_retriever.get_document_query_prompt(query)
-        memory_prompt = self.memory.get_memory_prompt()
+        memory_prompt = self.memory.get_history_prompt()
         prompt = memory_prompt + "\n" + docs_prompt
+        prompt += self.memory.chatbot_prefix + ": "
         return prompt
 
     def chat(self, query: str):
-        docs_prompt = self.__document_retriever.get_document_query_prompt(query)
         self.memory.add_human_message(query)
-        memory_prompt = self.memory.get_history_prompt()
-        prompt = memory_prompt + "\n" + docs_prompt
+        prompt = self.get_next_prompt(query)
         answer = self.__model(prompt)
         self.memory.add_chatbot_message(answer)
         return answer

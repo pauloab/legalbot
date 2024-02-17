@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,500;0,800;1,600&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: 600;
+}
+
+/*
+    Header
+*/
+
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-left: 45px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#header h1 {
+    margin: 15px;
+    padding: 15px;
+    border-left: 3px solid #000;
+    width: 300px;
+}
+
+/*
+    Sidenav
+*/
+
+.sidenav {
+    display: flex;
+    background-color: #fff;
+    color: #000;
+    font-weight: 300;
+    min-width: inherit;
+}
+
+.sidenav ul {
+    list-style-type: none;
+}
+
+.sidenav ul li {
+    border: 1px solid #000;
+}
+
+.sidenav ul li a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: #000;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sidenav .active {
+    background-color: #1b447f;
+
+}
+
+.sidenav .active a {
+    color: #fff;
+    font-weight: 700;
+}
+
+.sidenav svg {
+    display: inline-block;
+    width: 25px;
+    vertical-align: middle;
+    fill: #000;
+}
+
+.sidenav .active svg {
+    fill: #fff;
+}
+
+/*
+    Page Content Wrapper
+*/
+
+.page {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#page-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 0 45px;
+    width: 100%;
+    height: auto;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 40px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.page-header {
+    display: flex;
+    margin: 15px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.page-title {
+    margin: auto 0;
+}
+
+
+.page-content {
+    background: #FFF9F9;
+    height: 100%;
+    margin: 25px;
+}
+
+/*
+    Login Card
+*/
+
+.login-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 40px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 50px;
+    padding: 25px;
+    width: 490px;
+    margin: auto;
+    vertical-align: middle;
+}
+
+.login-card .card-head {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+
+}
+
+.login-card .card-head h1 {
+    display: inline-block;
+    text-align: left;
+    padding-left: 20px;
+    border-left: 3px solid #000;
+    margin-left: 20px;
+    height: 100px;
+}
+
+.login-card .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.login-card form {
+    width: 80%;
+}
+
+.login-card form input {
+    width: 100%;
+}
+
+/* 
+    form widgets 
+*/
+
+.form-input {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.form-error {
+    padding: 15px;
+    border-radius: 15px;
+    background-color: #e9e9e9;
+    width: 100%;
+}
+
+.form-error ul {
+    list-style-type: none;
+}
+
+/*
+    Buttons
+*/
+
+.btn-primary {
+    display: inline-block;
+    background: #1B447F;
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    display: inline-block;
+    background: #2A8CCB;
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-transparent {
+    display: inline-block;
+    background: #fff0;
+    border-radius: 10px;
+    padding: 12px;
+    color: #000;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-primary svg,
+.btn-secondary svg,
+.btn-transparent svg {
+    display: inline;
+    vertical-align: middle;
+    width: 20px;
+}
+
+.btn-primary svg,
+.btn-secondary svg {
+    fill: #fff;
+}
+
+.btn-transparent svg {
+    fill: #000;
+}
+
+
+/*
+    table
+*/
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table td,
+.table th {
+    border: 1px solid black;
+    text-align: left;
+    padding: 10px;
+}
+
+.table tr:first-child th {
+    border-top: 0;
+}
+
+.table tr:last-child td {
+    border-bottom: 0;
+}
+
+.table tr td:first-child,
+.table tr th:first-child {
+    border-left: 0;
+}
+
+.table tr td:last-child,
+.table tr th:last-child {
+    border-right: 0;
+}
+
+/*
+    Loader Indicator
+*/
+
+#loader-overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0005;
+    display: none;
+}
+
+#loader-overlay p {
+    color: #000;
+}
+
+#loader-overlay .indicator-box {
+    background-color: #fff;
+    width: fit-content;
+    padding: 15px;
+    border-radius: 15px;
+    margin: auto;
+    text-align: center;
+    font-size: 16pt;
+    max-width: 30%;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+.loading-ring {
+    width: 100px;
+    height: 100px;
+    margin: 15px auto;
+    border: solid 10px #82a;
+    border-radius: 50%;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    -webkit-transition: all 0.5s ease-in;
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    transition: all 0.5s ease-in;
+    animation-name: rotate;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+/*
+    Paginator
+*/
+
+.pagination {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+/*
+    Miscelaneus
+*/
+
+#traininMessage {
+    display: none;
+}

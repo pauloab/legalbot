@@ -1,6 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()
+import os
+
+DATA_DIR=os.environ.get("DATA_DIR")
+
 PDF_FILES = [
-    "D:/Proyectos/UTMACH-LEGAL-BOT/data/RPOS.pdf",
-    "D:/Proyectos/UTMACH-LEGAL-BOT/data/RGPA.pdf",
+    DATA_DIR+"RPOS.pdf",
+    DATA_DIR+"RGPA.pdf",
 ]
 
 
