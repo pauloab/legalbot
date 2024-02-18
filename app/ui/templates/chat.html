@@ -1,32 +1,25 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Probar Chat{% endblock %}
+{% block title %}Chat{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/testchat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h2 class="page-title">Probar Chatbot</h2>
+    <h2 class="page-title">Asistente Legal</h2>
 </div>
 <div class="page-content">
     <div class="chat chat-box">
         <div id="chat_box_body" class="chat-box-body">
             <div id="chat_messages">
-                <div class="profile other-profile">
-                    <img src="{% static 'img/LOGO.png' %}" width="30" height="30" />
-                    <span>Asistente virtual</span>
-                </div>
-                <div class="message other-message">
-                    Hola! soy el
-                    <b>
-                        Asistente virtual inteligente de la Universidad Técnica
-                        de Machala.</b
-                    >
-                    ¿Cómo puedo ayudarte hoy?
-                </div>
+				<div class="alert-card">
+					Bienvenido al <b>chat con el asistente legal.</b> <br>
+					Puedes preguntar cosas relacionadas a los reglamentos 
+					y estatutos de la institución. ¡Escribe algo para comenzar!
+				</div>
             </div>
         </div>
         <div id="typing">
@@ -51,28 +44,21 @@
         </div>
     </div>
 
-    <script>
-		//"use strict";
-	
+    <script>	
 		var chatInput = document.querySelector("#chat_input");
 		var typing = document.querySelector("#typing");
 		var send = document.querySelector("#send");
 		var chatMessages = document.querySelector("#chat_messages");
 		var chatBoxBody = document.querySelector("#chat_box_body");
-		var chatThread = [
-			{
-				profile: "other",
-				message:
-					"Hola! soy el Asistente virtual inteligente de la Universidad Técnica de Machala. ¿Cómo puedo ayudarte hoy?",
-			},
-		];
+		var chatThread = [];
+		var api = "{% url 'chat_api' %}";
 		var profile = {
 			other: {
-				name: "Asistente virtual",
+				name: "LegalBot",
 				pic: "{% static 'img/LOGO.png' %}",
 			},
 			my: {
-				name: "Yo",
+				name: "Usuario",
 				pic: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0id2hpdGUiLz4NCjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMiAxMkMyIDYuNDc3MTUgNi40NzcxNSAyIDEyIDJDMTcuNTIyOCAyIDIyIDYuNDc3MTUgMjIgMTJDMjIgMTcuNTIyOCAxNy41MjI4IDIyIDEyIDIyQzYuNDc3MTUgMjIgMiAxNy41MjI4IDIgMTJaTTExLjk5OTkgNkM5Ljc5MDc3IDYgNy45OTk5MSA3Ljc5MDg2IDcuOTk5OTEgMTBDNy45OTk5MSAxMi4yMDkxIDkuNzkwNzcgMTQgMTEuOTk5OSAxNEMxNC4yMDkgMTQgMTUuOTk5OSAxMi4yMDkxIDE1Ljk5OTkgMTBDMTUuOTk5OSA3Ljc5MDg2IDE0LjIwOSA2IDExLjk5OTkgNlpNMTcuMTExNSAxNS45OTc0QzE3Ljg2OTMgMTYuNDg1NCAxNy44MzIzIDE3LjU0OTEgMTcuMTQyMiAxOC4xMjg4QzE1Ljc1MTcgMTkuMjk2NiAxMy45NTgxIDIwIDEyLjAwMDEgMjBDMTAuMDU1MSAyMCA4LjI3MjE1IDE5LjMwNTkgNi44ODU1NiAxOC4xNTE4QzYuMTg5MzEgMTcuNTcyMyA2LjE1MjQyIDE2LjUwMzIgNi45MTM1MSAxNi4wMTJDNy4xNTA0NCAxNS44NTkxIDcuNDA4NDYgMTUuNzI1MSA3LjY4ODQ5IDE1LjYwOTdDOC44MTUxNiAxNS4xNDUyIDEwLjI1NDIgMTUgMTIgMTVDMTMuNzU0NiAxNSAxNS4yMDE4IDE1LjEzNTkgMTYuMzMxNCAxNS41OTU0QzE2LjYxMzYgMTUuNzEwMiAxNi44NzM0IDE1Ljg0NDEgMTcuMTExNSAxNS45OTc0WiIgZmlsbD0iIzMyMzIzMiIvPg0KPC9zdmc+",
 			},
 		};
@@ -157,7 +143,7 @@
 		function sendMessageToAPI(msg) {
 			typing.classList.add("active");
 			var xhr = new XMLHttpRequest();
-			var url = "/api/chatbot/";
+			var url = api;
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader("Content-Type", "application/json");
 			xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}" )
@@ -175,33 +161,32 @@
 		}
 	
 		// Procesar todo lo que tiene que ver con un nuevo mensaje
-		function sendMessage(p, elm) {
+		function sendMessage(senderProfile, elm) {
 			var r = "";
 			let msg = typeof elm == "string" ? elm : elm.value;
 			if (msg.replace(" ", "").length == 0) {
 				return;
 			}
 	
-			if (p == "my") {
+			if (senderProfile == "my") {
 				sendMessageToAPI(msg);
 			}
 	
-			if (chatThread[chatThread.length - 1].profile !== p) {
-				r += renderProfile(p);
-			}
+			r += renderProfile(senderProfile);
+			
 	
 			if (typeof elm === "string") {
-				r += renderMessage(p, msg);
+				r += renderMessage(senderProfile, msg);
 	
 				chatThread.push({
-					profile: p,
+					profile: senderProfile,
 					message: msg,
 				});
 			} else {
-				r += renderMessage(p, msg);
+				r += renderMessage(senderProfile, msg);
 	
 				chatThread.push({
-					profile: p,
+					profile: senderProfile,
 					message: msg,
 				});
 	

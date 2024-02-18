@@ -2,6 +2,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="keywords" content="Sistema de consultoria Legal Interna">
+    <meta name="description" content="Sistema de consultoria Legal Interna">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="es">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ChatBot UI">
+    <meta name="application-name" content="ChatBot UI">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="{% static 'img/logo.png' %}">
+    <meta name="theme-color" content="#ffffff">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,10 +27,10 @@
             <div class="loading-ring"></div>
             <p>Cargando...</p>
         </div>
-    </li>
     </div>
     {% include 'includes/header.html' %}
     <div class="page">
+        {% include 'includes/sidebar.html' %}
         <div id="page-wrapper">
             {% block content %}
             {% endblock %}
@@ -35,47 +46,6 @@
             loadingRing.style.display = 'none';
         }
     </script>
-    <script>
-        const trainbtn = document.getElementById("trainModelBtn");
-        const trainMessageContainer = document.getElementById("traininMessage");
-
-        trainbtn.addEventListener("click",event => {
-            showLoader("Re-entrenando modelo...")
-            fetch (
-                "{% url 'chatbot_train' %}",
-                {
-                    credentials:"same-origin",
-                    method: 'POST',
-                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                }
-            ).then(response => {
-                if (response.status == 200) {
-                    hideLoader();
-                    response.json().then(jsonResponse => {
-                        trainMessageContainer.style.display = 'block';
-                        trainMessageContainer.innerHTML = jsonResponse.message;
-                    });
-                } else if (response.status == 400 || response.status == 500){
-                    hideLoader();
-                    response.json().then(jsonResponse => {
-                        trainMessageContainer.style.display = 'block';
-                        trainMessageContainer.innerHTML = jsonResponse.message;
-                    });
-                } else {
-                    hideLoader();
-                    response.json().then(jsonResponse => {
-                        trainMessageContainer.style.display = 'block';
-                        trainMessageContainer.innerHTML = "Algo extraño sucedió, intentalo más tarde.";
-                    });
-                }
-            }).catch(err => {
-                hideLoader();
-                trainMessageContainer.style.display = 'block';
-                trainMessageContainer.innerHTML = "Verifica tu conexion a internet.";
-            });
-        });
-    </script>
-
     {% block scripts %}
     {% endblock %}
 </body>

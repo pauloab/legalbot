@@ -1,0 +1,44 @@
+{% extends 'layouts/fullwidth.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="card-head">
+            <img src="{% static 'img/logo.png' %}" alt="logo utmach" width="100px" height="100px" />
+            <h1>Sistema de consultoría Legal Interna</h1>
+        </div>
+        <form method="post">
+            <div class="card-body">
+                {% csrf_token %}
+                {% if  form.non_field_errors  %}
+                <div class="form-error">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <input 
+                    class="form-input" 
+                    type="text" 
+                    placeholder="Nombre de usuario"
+                    name="{{ form.username.name }}"
+                    id="{{ form.username.id_for_label }}"
+                    {% if form.username.value != None %}value="{{ form.username.value|stringformat:'s' }}"{% endif %}
+                    maxlength="{{ form.username.field.max_length }}"
+                    {% if form.username.field.required %}required{% endif %}>
+                <input 
+                    class="form-input" 
+                    type="password" 
+                    placeholder="Contraseña"
+                    name="{{ form.password.name }}"
+                    id="{{ form.password.id_for_label }}"
+                    {% if form.password.value != None %}value="{{ form.password.value|stringformat:'s' }}"{% endif %}
+                    maxlength="{{ form.password.field.max_length }}"
+                    {% if form.password.field.required %}required{% endif %}>
+                <input class="btn-primary" type="submit" value="Iniciar Sesión">
+            
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

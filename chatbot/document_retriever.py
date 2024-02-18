@@ -1,0 +1,74 @@
+from langchain.vectorstores.faiss import FAISS
+from langchain_community.embeddings.openai import OpenAIEmbeddings
+from etl.document import Document, DocumentChunk
+from langchain_core.documents.base import Document as LangchainDocument
+from dotenv import load_dotenv
+
+load_dotenv()
+import os
+
+EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
+
+
+class DocumentRetriever:
+
+    DEFAULR_RETRIEVER_PROMPT = """Sistema: Para tu respuesta, considera SOLAMENTE los siguientes extractos de normativa interna:
+    {input_docs}
+    Bot:"""
+
+    def __init__(
+        self,
+        retriever_prompt_template=DEFAULR_RETRIEVER_PROMPT,
+        score_threshold=0.5,
+        k=5,
+    ):
+        self.template = retriever_prompt_template
+        self.score_threshold = score_threshold
+        self.embeddings = OpenAIEmbeddings()
+        self.__k = k
+        self.__indexes = self.__load_indexes()
+
+    def __load_indexes(self):
+        return FAISS.load_local(EMBEDING_STORAGE, self.embeddings)
+
+    def search_documents(self, query):
+        return self.__indexes.similarity_search_with_score(
+            query,
+            k=self.__k,
+        )
+
+    def __parse_chunk(self, faiss_docs: LangchainDocument) -> list[DocumentChunk]:
+        chunks = []
+
+        for faiss_doc in faiss_docs:
+            metadata = faiss_doc.metadata
+            content = faiss_doc.page_content
+            chunks.append(DocumentChunk(content, metadata))
+        return chunks
+
+    def __filter_documents_by_score(
+        self, documents_with_scores: list[tuple[Document, float]]
+    ) -> list[LangchainDocument]:
+        documents = []
+        for document, score in documents_with_scores:
+            if score > self.score_threshold:
+                documents.append(document)
+        return documents
+
+    def get_document_query(self, query: str):
+        documents_with_scores = self.search_documents(query)
+        documents = self.__filter_documents_by_score(documents_with_scores)
+        chunk = self.__parse_chunk(documents)
+        return chunk
+
+    def get_document_query_prompt(self, query: str):
+        chunks = self.get_document_query(query)
+        if not chunks:
+            return ""
+
+        input_docs = ""
+        for chunk in chunks:
+            input_docs += "Normativa:" + chunk.metadata["title"]
+            input_docs += "\nContenido:\n" + chunk.content + "\n"
+
+        return self.template.format(input_docs=input_docs)
