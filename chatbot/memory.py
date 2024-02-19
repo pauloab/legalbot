@@ -1,5 +1,4 @@
 from chatbot.memory_storage import MemoryStorage
-from dotenv import load_dotenv
 
 
 class Memmory:

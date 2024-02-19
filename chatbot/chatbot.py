@@ -1,12 +1,8 @@
-from dotenv import load_dotenv
-
 from langchain_community.llms.openai import OpenAI
 
 from memory import Memmory
 from etl.document import Document
 from document_retriever import DocumentRetriever
-
-load_dotenv()
 
 
 class Chatbot:

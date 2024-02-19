@@ -15,7 +15,8 @@ class Document:
         title: str = None,
         chunks: list[DocumentChunk] = [],
         pages: list = [],
-        uuid: str = None,
+        _id: str = None,
+        deactivated: bool = False,
     ):
         self.filename = filename
         self.filesize = filesize
@@ -23,7 +24,8 @@ class Document:
         self.title = title
         self.chunks = chunks
         self.pages = pages
-        self.uuid = uuid
+        self._id = _id
+        self.deactivated = deactivated
 
     def __str__(self):
         return self.title
@@ -32,5 +34,6 @@ class Document:
 
         return {
             "title": self.title,
-            "uuid": self.uuid,
+            "uuid": self._id,
+            "deactivated": self.deactivated,
         }

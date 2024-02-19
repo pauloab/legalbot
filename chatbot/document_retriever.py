@@ -2,9 +2,7 @@ from langchain.vectorstores.faiss import FAISS
 from langchain_community.embeddings.openai import OpenAIEmbeddings
 from etl.document import Document, DocumentChunk
 from langchain_core.documents.base import Document as LangchainDocument
-from dotenv import load_dotenv
 
-load_dotenv()
 import os
 
 EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
@@ -29,7 +27,20 @@ class DocumentRetriever:
         self.__indexes = self.__load_indexes()
 
     def __load_indexes(self):
-        return FAISS.load_local(EMBEDING_STORAGE, self.embeddings)
+        indexes = []
+        # iterate over the embeding storage directory
+        # and load the indexes
+        if not os.path.exists(EMBEDING_STORAGE):
+            raise Exception("No embeding storage found")
+        for filename in os.listdir(EMBEDING_STORAGE):
+            if filename.endswith(".FAISS"):
+                indexes.append(
+                    FAISS.load_local(EMBEDING_STORAGE, self.embeddings, filename)
+                )
+        faiss_index = indexes[0]
+        for index in indexes[1:]:
+            faiss_index.merge_from(index)
+        return faiss_index
 
     def search_documents(self, query):
         return self.__indexes.similarity_search_with_score(

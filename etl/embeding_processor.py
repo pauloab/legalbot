@@ -2,10 +2,8 @@ from langchain.vectorstores.faiss import FAISS
 from langchain_community.embeddings.openai import OpenAIEmbeddings
 from etl.document import Document, DocumentChunk
 from etl.document_storage import DocumentStorage
+from distutils.dir_util import copy_tree
 
-from dotenv import load_dotenv
-
-load_dotenv()
 import os
 
 EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
@@ -15,28 +13,37 @@ class EmbeddingProcessor:
 
     def __init__(
         self,
-        documents: list[Document],
         embeddings=OpenAIEmbeddings(),
     ):
-        self.documents = documents
         self.embeddings = embeddings
-        self.filename = "embeddings.pkl"
 
-    def __embed_documents(self) -> FAISS:
+    def embed_document(self, doc: Document) -> FAISS:
         chunks = []
         metadatas = []
-        for doc in self.documents:
-            for chunk in doc.chunks:
-                chunks.append(chunk.content)
-                metadatas.append(chunk.metadata)
+        for chunk in doc.chunks:
+            chunks.append(chunk.content)
+            metadatas.append(chunk.metadata)
 
         embeddings = OpenAIEmbeddings()
-        self.__indexes = FAISS.from_texts(chunks, embeddings, metadatas=metadatas)
-        return self.__indexes
+        vectorStore = FAISS.from_texts(chunks, embeddings, metadatas=metadatas)
+        vectorStore.save_local(EMBEDING_STORAGE, doc.filename)
 
-    def process(self):
-        return self.__embed_documents()
+    def deactivate_index(self, filename: str):
+        os.rename(
+            os.path.join(EMBEDING_STORAGE, filename + ".pkl"),
+            os.path.join(EMBEDING_STORAGE, filename + ".pkl.deactivated"),
+        )
+        os.rename(
+            os.path.join(EMBEDING_STORAGE, filename + ".faiss"),
+            os.path.join(EMBEDING_STORAGE, filename + ".faiss.deactivated"),
+        )
 
-    def process_and_save(self):
-        self.documents = self.process()
-        self.__indexes.save_local(EMBEDING_STORAGE + self.filename)
+    def reactivate_index(self, filename: str):
+        os.rename(
+            os.path.join(EMBEDING_STORAGE, filename + ".pkl.deactivated"),
+            os.path.join(EMBEDING_STORAGE, filename + ".pkl"),
+        )
+        os.rename(
+            os.path.join(EMBEDING_STORAGE, filename + ".faiss.deactivated"),
+            os.path.join(EMBEDING_STORAGE, filename + ".faiss"),
+        )

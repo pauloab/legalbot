@@ -1,4 +1,3 @@
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
@@ -9,9 +8,6 @@ from etl.document import Document, DocumentChunk
 from etl.document_storage import DocumentStorage
 import re
 
-from dotenv import load_dotenv
-
-load_dotenv()
 import os
 
 CONNECTION_STR = os.environ.get("MONGO_CONNECTION_STRING")
@@ -75,7 +71,4 @@ class DocumentProcessor:
     def process_and_save(self):
         self.process()
         for doc in self.documents:
-            doc.uuid = self.__document_storage.add(doc)
-
-    def get_documents(self):
-        return self.documents
+            doc._id = self.__document_storage.add(doc)

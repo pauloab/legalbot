@@ -12,9 +12,22 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+import sys, os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# allow importing from other modules
+PROJECT_DIR = BASE_DIR.parent
+sys.path.append(str(PROJECT_DIR))
+
+from dotenv import find_dotenv, load_dotenv, dotenv_values
+
+
+load_dotenv(
+    find_dotenv(str(PROJECT_DIR) + "/.env", raise_error_if_not_found=True),
+    override=True,
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -50,7 +63,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "app.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -68,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "app.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
@@ -125,3 +138,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGIN_REDIRECT_URL = "/chat"
+
+# Celery settings
+
+from datetime import timedelta
+
+CELERY_TIMEZONE = "America/Guayaquil"
+CELERY_BROKER_URL = os.environ.get("MONGO_CONNECTION_STRING")
+CELERY_BEAT_SCHEDULE = {
+    "daily-etl": {
+        "task": "config.celery.etl",
+        "schedule": timedelta(days=1),
+    },
+}

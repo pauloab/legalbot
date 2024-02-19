@@ -18,15 +18,21 @@ class DocumentStorage:
                 "filename": document_obj.filename,
                 "filesize": document_obj.filesize,
                 "pages": document_obj.pages,
-                "chunks": document_obj.chunks,
+                "chunks": [
+                    {"content": chunk.content, "metadata": chunk.metadata}
+                    for chunk in document_obj.chunks
+                ],
                 "content": document_obj.content,
                 "deactivated": False,
             }
         )
         return inserted.inserted_id
 
-    def getAll(self):
-        return self.collection.find()
+    def getAll(self) -> list[Document]:
+        documents = []
+        for document in self.collection.find():
+            documents.append(Document(**document))
+        return documents
 
     def get_by_filename(self, filename):
         return self.collection.find_one({"filename": filename})
