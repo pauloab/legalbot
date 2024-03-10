@@ -33,9 +33,9 @@ class DocumentRetriever:
         if not os.path.exists(EMBEDING_STORAGE):
             raise Exception("No embeding storage found")
         for filename in os.listdir(EMBEDING_STORAGE):
-            if filename.endswith(".FAISS"):
+            if filename.endswith(".faiss"):
                 indexes.append(
-                    FAISS.load_local(EMBEDING_STORAGE, self.embeddings, filename)
+                    FAISS.load_local(EMBEDING_STORAGE, self.embeddings, filename.replace(".faiss", ""))
                 )
         faiss_index = indexes[0]
         for index in indexes[1:]:

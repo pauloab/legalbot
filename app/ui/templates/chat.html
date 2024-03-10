@@ -1,56 +1,63 @@
 {% extends 'layouts/base.html' %}
-{% load static %}
-
-{% block title %}Chat{% endblock %}
-
+ {% load static %} 
+ {% block title %}Chat{% endblock %} 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-{% endblock %}
-
+<link rel="stylesheet" href="{% static 'css/chat.css' %}" />
+{% endblock %} 
 {% block content %}
-<div class="page-header">
-    <h2 class="page-title">Asistente Legal</h2>
+<div class="page-header" style="justify-content: space-between;">
+	<h2 class="page-title">Asistente Legal</h2>
+	<a href="{% url 'chat_reset' %}" class="btn-primary">Reiniciar chat</a>
 </div>
 <div class="page-content">
-    <div class="chat chat-box">
-        <div id="chat_box_body" class="chat-box-body">
-            <div id="chat_messages">
+	<div class="chat chat-box">
+		<div id="chat_box_body" class="chat-box-body">
+			<div id="chat_messages">
+				{% if not messages %}
 				<div class="alert-card">
-					Bienvenido al <b>chat con el asistente legal.</b> <br>
-					Puedes preguntar cosas relacionadas a los reglamentos 
-					y estatutos de la institución. ¡Escribe algo para comenzar!
+					Bienvenido al <b>chat con el asistente legal.</b> <br />
+					Puedes preguntar cosas relacionadas a los reglamentos y
+					estatutos de la institución. ¡Escribe algo para comenzar!
 				</div>
-            </div>
-        </div>
-        <div id="typing">
-            <div>
-                <span></span> <span></span> <span></span>
-                Esperando respuesta...
-            </div>
-        </div>
-        <div class="chat-box-footer">
-            <textarea
-                id="chat_input"
-                placeholder="Escribe aquí tu mensaje..."
-            ></textarea>
-            <button id="send">
-                <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
-                    <path
-                        fill="#006ae3"
-                        d="M2,21L23,12L2,3V10L17,12L2,14V21Z"
-                    />
-                </svg>
-            </button>
-        </div>
-    </div>
+				{% endif %}
+			</div>
+		</div>
+		<div id="typing">
+			<div>
+				<span></span> <span></span> <span></span>
+				Esperando respuesta...
+			</div>
+		</div>
+		<div class="chat-box-footer">
+			<textarea
+				id="chat_input"
+				placeholder="Escribe aquí tu mensaje..."
+			></textarea>
+			<button id="send">
+				<svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+					<path
+						fill="#006ae3"
+						d="M2,21L23,12L2,3V10L17,12L2,14V21Z"
+					/>
+				</svg>
+			</button>
+		</div>
+	</div>
 
-    <script>	
+	<script>
 		var chatInput = document.querySelector("#chat_input");
 		var typing = document.querySelector("#typing");
 		var send = document.querySelector("#send");
 		var chatMessages = document.querySelector("#chat_messages");
 		var chatBoxBody = document.querySelector("#chat_box_body");
-		var chatThread = [];
+		var chatThread = [
+			{% for message in messages %}
+			{
+				profile: {% if forloop.counter|divisibleby:2 %}"other"{% else %}"my"{% endif %},
+				message: "{{ message|safe }}",
+			},
+			{% endfor %}
+		];
 		var api = "{% url 'chat_api' %}";
 		var profile = {
 			other: {
@@ -62,15 +69,15 @@
 				pic: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0id2hpdGUiLz4NCjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMiAxMkMyIDYuNDc3MTUgNi40NzcxNSAyIDEyIDJDMTcuNTIyOCAyIDIyIDYuNDc3MTUgMjIgMTJDMjIgMTcuNTIyOCAxNy41MjI4IDIyIDEyIDIyQzYuNDc3MTUgMjIgMiAxNy41MjI4IDIgMTJaTTExLjk5OTkgNkM5Ljc5MDc3IDYgNy45OTk5MSA3Ljc5MDg2IDcuOTk5OTEgMTBDNy45OTk5MSAxMi4yMDkxIDkuNzkwNzcgMTQgMTEuOTk5OSAxNEMxNC4yMDkgMTQgMTUuOTk5OSAxMi4yMDkxIDE1Ljk5OTkgMTBDMTUuOTk5OSA3Ljc5MDg2IDE0LjIwOSA2IDExLjk5OTkgNlpNMTcuMTExNSAxNS45OTc0QzE3Ljg2OTMgMTYuNDg1NCAxNy44MzIzIDE3LjU0OTEgMTcuMTQyMiAxOC4xMjg4QzE1Ljc1MTcgMTkuMjk2NiAxMy45NTgxIDIwIDEyLjAwMDEgMjBDMTAuMDU1MSAyMCA4LjI3MjE1IDE5LjMwNTkgNi44ODU1NiAxOC4xNTE4QzYuMTg5MzEgMTcuNTcyMyA2LjE1MjQyIDE2LjUwMzIgNi45MTM1MSAxNi4wMTJDNy4xNTA0NCAxNS44NTkxIDcuNDA4NDYgMTUuNzI1MSA3LjY4ODQ5IDE1LjYwOTdDOC44MTUxNiAxNS4xNDUyIDEwLjI1NDIgMTUgMTIgMTVDMTMuNzU0NiAxNSAxNS4yMDE4IDE1LjEzNTkgMTYuMzMxNCAxNS41OTU0QzE2LjYxMzYgMTUuNzEwMiAxNi44NzM0IDE1Ljg0NDEgMTcuMTExNSAxNS45OTc0WiIgZmlsbD0iIzMyMzIzMiIvPg0KPC9zdmc+",
 			},
 		};
-	
+
 		// ----- EVENTS ----- //
-	
+
 		// agrandar la caja de texto conforme se escriba
 		chatInput.addEventListener("input", function () {
 			this.style.height = "0";
 			this.style.height = this.scrollHeight + 1 + "px";
 		});
-	
+
 		// Al dar enter, se envia el mensaje
 		chatInput.addEventListener("keydown", function (evt) {
 			if (evt.keyCode == 13 && !evt.shiftKey) {
@@ -78,14 +85,14 @@
 				evt.preventDefault();
 			}
 		});
-	
+
 		// Al dar click en neviar se envia el mensaje
 		send.addEventListener("click", function () {
 			sendMessage("my", chatInput);
 		});
-	
+
 		// ----- FUNCTIONS -----//
-	
+
 		// INcrustar HTML del perfil de usuario
 		function renderProfile(p) {
 			return (
@@ -100,20 +107,20 @@
 				"</span></div>"
 			);
 		}
-	
+
 		// Genera HTML para un mensaje
 		function renderMessage(p, m) {
 			return '<div class="message ' + p + '-message hide">' + m + "</div>";
 		}
-	
+
 		// Añadir un nuevo mensaje al chat
 		function appendMessage(r) {
 			chatMessages.insertAdjacentHTML("beforeend", r);
-	
+
 			var elms = document.querySelectorAll(".profile.hide, .message.hide");
-	
+
 			for (var i = 0; i < elms.length; i++) {
-				elms[i].classList.remove("hide");	
+				elms[i].classList.remove("hide");
 				if (elms[i].classList.contains("profile")) {
 					elms[i].style.height = elms[i].scrollHeight + "px";
 				} else {
@@ -122,14 +129,18 @@
 			}
 			chatBoxBody.scrollTop = chatBoxBody.scrollHeight;
 		}
-	
-		
+
+
 		// Cuando el servidor responde mostrar la respusta
+		function onAPIResponse() {
+			questForResponse();
+		}
+
 		function onAPIResponse(response) {
 			typing.classList.remove("active");
 			sendMessage("other", response);
 		}
-	
+
 		// Cuando sl servidor da error muestra un mensaje cualquiera
 		function onAPIError() {
 			sendMessage(
@@ -138,7 +149,7 @@
 			);
 			typing.classList.remove("active");
 		}
-	
+
 		// Envia el mensaje del usuario al servidor
 		function sendMessageToAPI(msg) {
 			typing.classList.add("active");
@@ -149,17 +160,44 @@
 			xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}" )
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState === 4 && xhr.status === 200) {
-					var json = JSON.parse(xhr.responseText);
-					onAPIResponse(json.response);
+					setTimeout(function(){
+						questForResponse();
+					}, 1000);
 				} else if (xhr.readyState === 4) {
 					onAPIError();
 				}
 			};
-	
+
 			var data = JSON.stringify({ question: msg });
 			xhr.send(data);
 		}
-	
+
+		function questForResponse(){
+			var xhr = new XMLHttpRequest();
+			var url = api;
+			xhr.open("GET", url, true);
+			xhr.setRequestHeader("Content-Type", "application/json");
+			xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}" )
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					const json = JSON.parse(xhr.responseText);
+					const waiting = json.waiting	
+					if(waiting){
+						setTimeout(function(){
+							questForResponse();
+						}, 1000);
+					} else {
+						const response = json.response;
+						onAPIResponse(response);
+					}
+				} else if (xhr.readyState === 4) {
+					onAPIError();
+				}
+			};
+
+			xhr.send();
+		}
+
 		// Procesar todo lo que tiene que ver con un nuevo mensaje
 		function sendMessage(senderProfile, elm) {
 			var r = "";
@@ -167,37 +205,43 @@
 			if (msg.replace(" ", "").length == 0) {
 				return;
 			}
-	
+
 			if (senderProfile == "my") {
 				sendMessageToAPI(msg);
 			}
-	
+
 			r += renderProfile(senderProfile);
-			
-	
+
+
 			if (typeof elm === "string") {
 				r += renderMessage(senderProfile, msg);
-	
+
 				chatThread.push({
 					profile: senderProfile,
 					message: msg,
 				});
 			} else {
 				r += renderMessage(senderProfile, msg);
-	
+
 				chatThread.push({
 					profile: senderProfile,
 					message: msg,
 				});
-	
+
 				elm.value = "";
 			}
-	
+
 			appendMessage(r);
 		}
-	
+
+		for (var i = 0; i < chatThread.length; i++) {
+			appendMessage(
+				renderProfile(chatThread[i].profile) +
+					renderMessage(chatThread[i].profile, chatThread[i].message)
+			);
+		}
+
 		chatBoxBody.scrollTop = chatBoxBody.scrollHeight;
 	</script>
-
 </div>
 {% endblock %}

@@ -1,0 +1,26 @@
+[
+	{
+		"model": "ui.Configuracion",
+		"pk": 1,
+		"fields": {
+			"clave": "modelo",
+			"valor": "gpt-3.5-turbo-instruct"
+		}
+	},
+	{
+		"model": "ui.Configuracion",
+		"pk": 2,
+		"fields": {
+			"clave": "contexto",
+			"valor": "Eres un bot de la Universidad Técnica de Machala que contesta dudas sobre normas legales internas de la universidad."
+		}
+	},
+	{
+		"model": "ui.Configuracion",
+		"pk": 3,
+		"fields": {
+			"clave": "temperatura",
+			"valor": "0.7"
+		}
+	}
+]

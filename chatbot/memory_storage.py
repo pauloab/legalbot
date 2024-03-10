@@ -17,20 +17,33 @@ class MemoryStorage:
                 "context": memory_obj.context,
                 "message_history": memory_obj.message_history,
                 "userId": memory_obj.userId,
+                "waiting":memory_obj.waiting,
+                "k":memory_obj.l
             }
         )
         return inserted.inserted_id
 
-    def getAll(self):
-        return self.collection.find()
+    def set_waiting_status(self, _id, waiting):
+        self.collection.update_one(
+            {"_id": _id},
+            {
+                "$set": {
+                    "waiting": waiting,
+                }
+            },
+        )
 
-    def filter_by_userId(self, userId) -> list[Memory]:
-        out = []
-        for memory in self.collection.find({"userId": userId}):
-            out.append(Memory(**memory))
+    def get_by_userId(self, userId) -> Memory:
+        memory = self.collection.find_one({"userId":userId})
+        if not memory:
+            return None
+        return Memory(**memory)
 
     def get_by_uuid(self, uuid):
-        return self.collection.find_one({"_id": uuid})
+        memory =  self.collection.find_one({"_id": uuid})
+        if not memory:
+            return None
+        return Memory(**memory)
 
     def update_history(self, uuid, message_history: list[str]):
         self.collection.update_one(

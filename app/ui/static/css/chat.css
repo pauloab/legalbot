@@ -11,8 +11,8 @@
     box-sizing: border-box;
 }
 .chat-box > .chat-box-body {
-    height: 100%;
-    max-height: 250px;
+    height: 350px;
+    max-height: 350px;
     display: flex;
     overflow: auto;
     flex-direction: column;

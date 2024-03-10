@@ -139,6 +139,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "/chat"
 
+LOGIN_URL = "/"
+
 # Celery settings
 
 from datetime import timedelta
@@ -148,6 +150,6 @@ CELERY_BROKER_URL = os.environ.get("MONGO_CONNECTION_STRING")
 CELERY_BEAT_SCHEDULE = {
     "daily-etl": {
         "task": "config.celery.etl",
-        "schedule": timedelta(days=1),
+        "schedule": timedelta(minutes=5),
     },
 }

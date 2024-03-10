@@ -1,8 +1,8 @@
 from langchain_community.llms.openai import OpenAI
 
-from memory import Memmory
+from chatbot.memory import Memory
 from etl.document import Document
-from document_retriever import DocumentRetriever
+from chatbot.document_retriever import DocumentRetriever
 
 
 class Chatbot:
@@ -15,11 +15,12 @@ class Chatbot:
 
     def __init__(
         self,
-        memory: Memmory,
+        memory: Memory,
         model_name="gpt-3.5-turbo-instruct",
+        temperature=0.7,
         chatbot_context=DEFAULT_CONTEXT,
     ):
-        self.__model = OpenAI(model=model_name)
+        self.__model = OpenAI(model=model_name, temperature=temperature)
         self.__document_retriever = DocumentRetriever()
         self.__chatbot_context = chatbot_context
         self.memory = memory
