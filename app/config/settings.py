@@ -29,6 +29,11 @@ load_dotenv(
     override=True,
 )
 
+os.environ["DATA_DIR"] = os.path.join(PROJECT_DIR, os.environ["DATA_DIR"])
+os.environ["EMBEDING_STORAGE"] = os.path.join(
+    PROJECT_DIR, os.environ["EMBEDING_STORAGE"]
+)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -147,9 +152,3 @@ from datetime import timedelta
 
 CELERY_TIMEZONE = "America/Guayaquil"
 CELERY_BROKER_URL = os.environ.get("MONGO_CONNECTION_STRING")
-CELERY_BEAT_SCHEDULE = {
-    "daily-etl": {
-        "task": "config.celery.etl",
-        "schedule": timedelta(minutes=5),
-    },
-}

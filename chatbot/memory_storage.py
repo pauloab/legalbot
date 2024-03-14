@@ -17,11 +17,11 @@ class MemoryStorage:
                 "context": memory_obj.context,
                 "message_history": memory_obj.message_history,
                 "userId": memory_obj.userId,
-                "waiting":memory_obj.waiting,
-                "k":memory_obj.l
+                "waiting": memory_obj.waiting,
+                "k": memory_obj.l,
             }
         )
-        return inserted.inserted_id
+        return inserted
 
     def set_waiting_status(self, _id, waiting):
         self.collection.update_one(
@@ -34,13 +34,13 @@ class MemoryStorage:
         )
 
     def get_by_userId(self, userId) -> Memory:
-        memory = self.collection.find_one({"userId":userId})
+        memory = self.collection.find_one({"userId": userId})
         if not memory:
             return None
         return Memory(**memory)
 
     def get_by_uuid(self, uuid):
-        memory =  self.collection.find_one({"_id": uuid})
+        memory = self.collection.find_one({"_id": uuid})
         if not memory:
             return None
         return Memory(**memory)

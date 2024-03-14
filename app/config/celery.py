@@ -1,9 +1,7 @@
-from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 from django.conf import settings
 from pathlib import Path
-from celery.signals import worker_ready
 
 import sys
 
@@ -22,11 +20,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 celery = Celery("app")
 
 celery.config_from_object("django.conf:settings", namespace="CELERY")
-
-
-@celery.task
-def etl():
-    start_etl_process()
 
 
 celery.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

@@ -10,6 +10,7 @@ from django.views import View
 
 from ui import validators, models, tasks
 from chatbot.memory_storage import MemoryStorage
+from chatbot.memory import Memory
 
 import os
 
@@ -47,6 +48,10 @@ class Chat(LoginRequiredMixin, View):
     def get(self, request):
         storage = MemoryStorage(CONNECTION_STR, DBNAME)
         memory = storage.get_by_userId(request.user.id)
+        if not memory:
+            contexto = models.Configuracion.objects.get(clave="contexto").valor
+            memory = Memory(contexto, request.user.id)
+            memory._id = storage.add(memory)
         history = memory.get_clean_message_history()
         return render(request, self.template_name, {"messages": history})
 
@@ -61,6 +66,11 @@ class ChatAPI(View):
     def get(self, request):
         storage = MemoryStorage(CONNECTION_STR, DBNAME)
         memory = storage.get_by_userId(request.user.id)
+        if not memory:
+            contexto = models.Configuracion.objects.get(clave="contexto").valor
+            memory = Memory(contexto, request.user.id)
+            memory._id = storage.add(memory)
+
         history = memory.get_clean_message_history()
         http_response = {
             "waiting": memory.waiting,
@@ -88,10 +98,13 @@ class ChatAPI(View):
             contexto = models.Configuracion.objects.get(clave="contexto").valor
             modelo = models.Configuracion.objects.get(clave="modelo").valor
             temperature = models.Configuracion.objects.get(clave="temperatura").valor
-            tasks.send_chat_message.delay(json_req["question"], user_id, contexto, modelo, temperature)
+            tasks.send_chat_message.delay(
+                json_req["question"], user_id, contexto, modelo, temperature
+            )
             http_response["response"] = {"response": "Preguntando..."}
             http_response["status"] = 200
         return JsonResponse(http_response, safe=False, status=http_response["status"])
+
 
 def reset_chat(request):
     storage = MemoryStorage(CONNECTION_STR, DBNAME)
