@@ -13,11 +13,17 @@
 	<div class="chat chat-box">
 		<div id="chat_box_body" class="chat-box-body">
 			<div id="chat_messages">
-				{% if not messages %}
-				<div class="alert-card">
-					Bienvenido al <b>chat con el asistente legal.</b> <br />
+				{% if not history %}
+				<div class="alert-card" style="margin-bottom: 15px;">
+					Bienvenido al <b>chat con el asistente legal de la Universidad Técnica de Machala.</b> <br />
 					Puedes preguntar cosas relacionadas a los reglamentos y
 					estatutos de la institución. ¡Escribe algo para comenzar!
+				</div>
+				<div class="alert-card">
+					<b>Advertencia: </b> El asistente es un modelo de generación de texto
+					y puede no responder todas tus preguntas, o responder erroneamente en casos particulares.
+					Se recomienda utilizar el asistente con precaución y contrastar las respuestas con los instrumentos legales.
+					<b>La UTMACH no se hace responsable de las respuestas de este asistente.</b>
 				</div>
 				{% endif %}
 			</div>
@@ -51,10 +57,10 @@
 		var chatMessages = document.querySelector("#chat_messages");
 		var chatBoxBody = document.querySelector("#chat_box_body");
 		var chatThread = [
-			{% for message in messages %}
+			{% for message in history %}
 			{
 				profile: {% if forloop.counter|divisibleby:2 %}"other"{% else %}"my"{% endif %},
-				message: "{{ message|safe }}",
+				message: `{{ message|safe }}`,
 			},
 			{% endfor %}
 		];
@@ -65,7 +71,7 @@
 				pic: "{% static 'img/LOGO.png' %}",
 			},
 			my: {
-				name: "Usuario",
+				name: "{{request.user.username}}",
 				pic: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0id2hpdGUiLz4NCjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMiAxMkMyIDYuNDc3MTUgNi40NzcxNSAyIDEyIDJDMTcuNTIyOCAyIDIyIDYuNDc3MTUgMjIgMTJDMjIgMTcuNTIyOCAxNy41MjI4IDIyIDEyIDIyQzYuNDc3MTUgMjIgMiAxNy41MjI4IDIgMTJaTTExLjk5OTkgNkM5Ljc5MDc3IDYgNy45OTk5MSA3Ljc5MDg2IDcuOTk5OTEgMTBDNy45OTk5MSAxMi4yMDkxIDkuNzkwNzcgMTQgMTEuOTk5OSAxNEMxNC4yMDkgMTQgMTUuOTk5OSAxMi4yMDkxIDE1Ljk5OTkgMTBDMTUuOTk5OSA3Ljc5MDg2IDE0LjIwOSA2IDExLjk5OTkgNlpNMTcuMTExNSAxNS45OTc0QzE3Ljg2OTMgMTYuNDg1NCAxNy44MzIzIDE3LjU0OTEgMTcuMTQyMiAxOC4xMjg4QzE1Ljc1MTcgMTkuMjk2NiAxMy45NTgxIDIwIDEyLjAwMDEgMjBDMTAuMDU1MSAyMCA4LjI3MjE1IDE5LjMwNTkgNi44ODU1NiAxOC4xNTE4QzYuMTg5MzEgMTcuNTcyMyA2LjE1MjQyIDE2LjUwMzIgNi45MTM1MSAxNi4wMTJDNy4xNTA0NCAxNS44NTkxIDcuNDA4NDYgMTUuNzI1MSA3LjY4ODQ5IDE1LjYwOTdDOC44MTUxNiAxNS4xNDUyIDEwLjI1NDIgMTUgMTIgMTVDMTMuNzU0NiAxNSAxNS4yMDE4IDE1LjEzNTkgMTYuMzMxNCAxNS41OTU0QzE2LjYxMzYgMTUuNzEwMiAxNi44NzM0IDE1Ljg0NDEgMTcuMTExNSAxNS45OTc0WiIgZmlsbD0iIzMyMzIzMiIvPg0KPC9zdmc+",
 			},
 		};
@@ -113,6 +119,10 @@
 			return '<div class="message ' + p + '-message hide">' + m + "</div>";
 		}
 
+		function renderError(m) {
+			return '<div class="alert-card" style="margin-top: 15px">' + m + "</div>";
+		}
+
 		// Añadir un nuevo mensaje al chat
 		function appendMessage(r) {
 			chatMessages.insertAdjacentHTML("beforeend", r);
@@ -144,7 +154,7 @@
 		// Cuando sl servidor da error muestra un mensaje cualquiera
 		function onAPIError() {
 			sendMessage(
-				"other",
+				"error",
 				"Ups! paraece que algo extraño sucedió, intenta recargando el sitio o inténtalo más tarde"
 			);
 			typing.classList.remove("active");
@@ -208,7 +218,11 @@
 
 			if (senderProfile == "my") {
 				sendMessageToAPI(msg);
-			}
+			} else if (senderProfile == "error") {
+				r += renderError(msg);
+				appendMessage(r);
+				return;
+			} 
 
 			r += renderProfile(senderProfile);
 

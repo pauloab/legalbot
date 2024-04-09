@@ -10,15 +10,17 @@ EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 
 class DocumentRetriever:
 
-    DEFAULR_RETRIEVER_PROMPT = """Sistema: Para tu respuesta, considera SOLAMENTE los siguientes extractos de normativa interna:
+    DEFAULR_RETRIEVER_PROMPT = """Para tu respuesta, considera SOLAMENTE los siguientes extractos de normativa interna
+    y responde con el formato: 'De acuerdo al Art. (numero) del (nombre del documento) "(cita exacta)".
+    Documentos Relacionados: 
     {input_docs}
-    Bot:"""
+    """
 
     def __init__(
         self,
         retriever_prompt_template=DEFAULR_RETRIEVER_PROMPT,
         score_threshold=0.5,
-        k=5,
+        k=3,
     ):
         self.template = retriever_prompt_template
         self.score_threshold = score_threshold
@@ -35,7 +37,11 @@ class DocumentRetriever:
         for filename in os.listdir(EMBEDING_STORAGE):
             if filename.endswith(".faiss"):
                 indexes.append(
-                    FAISS.load_local(EMBEDING_STORAGE, self.embeddings, filename.replace(".faiss", ""))
+                    FAISS.load_local(
+                        EMBEDING_STORAGE,
+                        self.embeddings,
+                        filename.replace(".faiss", ""),
+                    )
                 )
         faiss_index = indexes[0]
         for index in indexes[1:]:
@@ -55,6 +61,7 @@ class DocumentRetriever:
             metadata = faiss_doc.metadata
             content = faiss_doc.page_content
             chunks.append(DocumentChunk(content, metadata))
+
         return chunks
 
     def __filter_documents_by_score(
@@ -62,7 +69,7 @@ class DocumentRetriever:
     ) -> list[LangchainDocument]:
         documents = []
         for document, score in documents_with_scores:
-            if score > self.score_threshold:
+            if score <= self.score_threshold:
                 documents.append(document)
         return documents
 
@@ -74,12 +81,12 @@ class DocumentRetriever:
 
     def get_document_query_prompt(self, query: str):
         chunks = self.get_document_query(query)
-        if not chunks:
-            return ""
+        input_docs = "Documentos relevantes para la consulta: \n"
 
-        input_docs = ""
+        if not chunks:
+            input_docs += "No se encontraron resultados"
+
         for chunk in chunks:
-            input_docs += "Normativa:" + chunk.metadata["title"]
-            input_docs += "\nContenido:\n" + chunk.content + "\n"
+            input_docs += chunk.content + "\n"
 
         return self.template.format(input_docs=input_docs)

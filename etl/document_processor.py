@@ -16,9 +16,9 @@ DBNAME = os.environ.get("MONGO_DBNAME")
 
 class DocumentProcessor:
     SUMARIZER_PROMPT = """
-    A continuación se mostrará las dos últimas páginas de un documento de una normativa legal.
-    Responde únicamente con el nombre del documento, en caso de no determinarlo, responde con "Documento no identificado".
-    Documento:
+    A continuación se mostrará la primera pagina de un documento de una normativa legal.
+    Responde únicamente con el nombre del documento en mayúsculas, en caso de no determinarlo, responde con "Documento no identificado".
+    Fragmento:
     {input_page}
     """
 
@@ -45,7 +45,7 @@ class DocumentProcessor:
     def __add_title(self) -> list[Document]:
         docs = []
         for doc in self.documents:
-            last_pages = doc.pages[-1] + doc.pages[-2]
+            last_pages = doc.pages[0]
             title = self.__sumerizer_llm(
                 self.__sumarizer_prompt.format(input_page=last_pages)
             )
@@ -53,13 +53,12 @@ class DocumentProcessor:
 
     def __chunk_documents(self):
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=512,
-            chunk_overlap=32,
+            separators=["Art."],
             length_function=len,
         )
 
         for doc in self.documents:
-            splitted = text_splitter.split_text(doc.content)
+            splitted = text_splitter.split_text("Art." + doc.content)
             metadata = doc.get_metadata()
             doc.chunks = [DocumentChunk(chunk, metadata) for chunk in splitted]
 
@@ -71,4 +70,4 @@ class DocumentProcessor:
     def process_and_save(self):
         self.process()
         for doc in self.documents:
-            doc._id = self.__document_storage.add(doc)
+            doc.id = self.__document_storage.add(doc)

@@ -12,13 +12,13 @@ class MemoryStorage:
     def add(self, memory_obj: Memory):
         inserted = self.collection.insert_one(
             {
-                "human_prefix": memory_obj.human_prefix,
-                "chatbot_prefix": memory_obj.chatbot_prefix,
+                "human_name": memory_obj.human_name,
+                "chatbot_name": memory_obj.chatbot_name,
                 "context": memory_obj.context,
                 "message_history": memory_obj.message_history,
                 "userId": memory_obj.userId,
-                "waiting": memory_obj.waiting,
                 "k": memory_obj.l,
+                "task_id": memory_obj.task_id,
             }
         )
         return inserted
@@ -29,6 +29,16 @@ class MemoryStorage:
             {
                 "$set": {
                     "waiting": waiting,
+                }
+            },
+        )
+
+    def set_task_id(self, _id, task_id):
+        self.collection.update_one(
+            {"_id": _id},
+            {
+                "$set": {
+                    "task_id": task_id,
                 }
             },
         )

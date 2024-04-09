@@ -12,15 +12,5 @@ def get_text_by_page(pdf_reader: PdfReader):
         text_extracted = page.extract_text()
 
         if text_extracted:
-            page_number = str(i)
-            text_extracted = (
-                "==INICIO PAGINA "
-                + page_number
-                + "==\n"
-                + text_extracted
-                + "\n==FIN PAGINA "
-                + page_number
-                + "==\n"
-            )
             pages.append(text_extracted)
     return pages

@@ -24,7 +24,7 @@ class Document:
         self.title = title
         self.chunks = chunks
         self.pages = pages
-        self._id = _id
+        self.id = _id
         self.deactivated = deactivated
 
     def __str__(self):
@@ -34,6 +34,6 @@ class Document:
 
         return {
             "title": self.title,
-            "uuid": self._id,
+            "uuid": self.id,
             "deactivated": self.deactivated,
         }

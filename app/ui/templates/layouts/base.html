@@ -31,10 +31,19 @@
     {% include 'includes/header.html' %}
     <div class="page">
         {% include 'includes/sidebar.html' %}
-        <div id="page-wrapper">
-            {% block content %}
-            {% endblock %}
-        </div>
+        {% if messages %}
+        <section style="display: flex; width: 100%; flex-direction: column; gap: 10px; margin: 0 20px;">
+            <div style="display: flex; width: 100%; flex-direction: column; gap: 10px;">
+                {% for message in messages %}
+                <div {% if message.tags %} class="alert-card {{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div id="page-wrapper">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </section>
     </div>
     <script>
         const loadingRing = document.getElementById("loader-overlay");

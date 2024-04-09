@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from etl.document import Document
 
 
@@ -38,16 +39,29 @@ class DocumentStorage:
         return self.collection.find_one({"filename": filename})
 
     def get_by_uuid(self, uuid):
-        return self.collection.find_one({"_id": uuid})
+        storage_doc = self.collection.find_one({"_id": ObjectId(uuid)})
+        if not storage_doc:
+            return None
+        return Document(**storage_doc)
 
     def activate_document(self, filename):
         self.collection.update_one(
             {"filename": filename}, {"$set": {"deactivated": False}}
         )
 
+    def activate_document_by_id(self, id):
+        self.collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": {"deactivated": False}}
+        )
+
     def deactivate_document(self, filename):
         self.collection.update_one(
             {"filename": filename}, {"$set": {"deactivated": True}}
+        )
+
+    def deactivate_document_by_id(self, id):
+        self.collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": {"deactivated": True}}
         )
 
     def delete_document(self, filename):

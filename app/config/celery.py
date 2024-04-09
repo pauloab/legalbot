@@ -12,8 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 OTHER_TEAM_WORK_PARENT_DIR = BASE_DIR.parent
 sys.path.append(str(OTHER_TEAM_WORK_PARENT_DIR))
 
-from etl.etl import start_etl_process
-
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 

@@ -151,4 +151,11 @@ LOGIN_URL = "/"
 from datetime import timedelta
 
 CELERY_TIMEZONE = "America/Guayaquil"
+CELERY_RESULT_BACKEND = "mongodb"
+CELERY_MONGODB_BACKEND_SETTINGS = {
+    "host": os.environ.get("MONGO_CONNECTION_HOST"),
+    "port": os.environ.get("MONGO_CONNECTION_PORT"),
+    "database": os.environ.get("MONGO_CELERY_DATABASE"),
+    "taskmeta_collection": "taskmeta",
+}
 CELERY_BROKER_URL = os.environ.get("MONGO_CONNECTION_STRING")
