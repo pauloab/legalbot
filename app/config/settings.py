@@ -25,7 +25,9 @@ from dotenv import find_dotenv, load_dotenv, dotenv_values
 
 
 load_dotenv(
-    find_dotenv(str(PROJECT_DIR) + "/.env", raise_error_if_not_found=True),
+    find_dotenv(
+        str(PROJECT_DIR) + "/.env",
+    ),
     override=True,
 )
 
@@ -37,13 +39,11 @@ os.environ["EMBEDING_STORAGE"] = os.path.join(
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=d0p3$*y0rhe57#bf))*u&tj28(+@!qm$wa$iubzy3q827mae2"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
