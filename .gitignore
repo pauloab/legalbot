@@ -47,7 +47,7 @@ pip-delete-this-directory.txt
 celerybeat-schedule.* 
 
 # Environments 
-.env 
+*.env 
 env/ 
 env.bak/ 
 
@@ -70,3 +70,8 @@ GitHub.sublime-settings
 .history
 
 .env
+
+# PDF and Storage
+*.pdf
+*.pkl
+*.faiss
