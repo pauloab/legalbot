@@ -69,8 +69,6 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
-.env
-
 # PDF and Storage
 *.pdf
 *.pkl

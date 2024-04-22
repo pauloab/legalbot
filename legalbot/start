@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+cd app
+
+
+python manage.py collectstatic --noinput 
+gunicorn --config gunicorn_config.py config.wsgi:application
+python manage.py createsuperuser --noinput 
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
+
+cd ..
