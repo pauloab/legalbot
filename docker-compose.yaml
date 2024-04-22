@@ -7,8 +7,6 @@ services:
       dockerfile: ./legalbot/Dockerfile
     image: app
     command: /start
-    cpu_shares: 100 
-    mem_limit: 1073741824
     volumes:
       - .:/app
       - /var/www/static/:/var/www/static/
