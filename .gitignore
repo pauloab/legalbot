@@ -73,3 +73,6 @@ GitHub.sublime-settings
 *.pdf
 *.pkl
 *.faiss
+
+
+certbot/

@@ -10,8 +10,7 @@ services:
     volumes:
       - .:/app
       - /var/www/static/:/var/www/static/
-      - /var/certbot/conf:/etc/letsencrypt/:ro
-
+      - ./certbot/conf:/etc/letsencrypt:ro
     ports:
       - 8000:8000
     env_file:
@@ -60,15 +59,17 @@ services:
       - "443:443"
     volumes:
       - /var/www/static/:/var/www/static/
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
     depends_on:
       - web
 
   certbot:
     image: certbot/certbot:latest
     volumes:
-      - /var/certbot/conf:/etc/letsencrypt/:rw
-      - /var/certbot/www/:/var/www/certbot/:rw
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
     depends_on:
       - nginx
 

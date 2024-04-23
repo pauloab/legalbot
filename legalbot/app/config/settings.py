@@ -1,8 +1,7 @@
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv, dotenv_values
 from django.core.management import call_command
 
-call_command("loaddata", "config.json")
+#call_command("loaddata", "config.json")
 
 import sys, os
 
@@ -16,6 +15,8 @@ sys.path.append(str(PROJECT_DIR))
 DEBUG = os.environ.get("DEBUG", False) == "True"
 
 if DEBUG:
+
+    from dotenv import find_dotenv, load_dotenv, dotenv_values
 
     load_dotenv(
         find_dotenv(

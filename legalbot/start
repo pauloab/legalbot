@@ -4,13 +4,14 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-cd app
+cd legalbot/app
 
+python manage.py check --deploy
 
+python manage.py loaddata ui/config/config.json
 python manage.py collectstatic --noinput 
-gunicorn --config gunicorn_config.py config.wsgi:application
-python manage.py createsuperuser --noinput 
+python manage.py createsuperuser --noinput
 python manage.py migrate
-python manage.py runserver 0.0.0.0:8000
+gunicorn --config gunicorn_config.py config.wsgi:application
 
 cd ..
