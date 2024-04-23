@@ -3,4 +3,6 @@
 set -o errexit
 set -o nounset
 
-celery -A config.celery  worker -l INFO -pool=solo
+cd legalbot/app
+
+celery -A config.celery  worker -l INFO 

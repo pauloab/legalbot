@@ -148,10 +148,12 @@ CELERY_BROKER_URL = os.environ.get("MONGO_CONNECTION_STRING")
 
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     STATIC_ROOT = os.environ.get("STATIC_ROOT")
+    INSTALLED_APPS.append('corsheaders')
+    MIDDLEWARE.append('corsheaders.middleware.CorsMiddleware')
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(' ')
+

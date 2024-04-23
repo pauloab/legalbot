@@ -8,10 +8,12 @@ cd legalbot/app
 
 python manage.py check --deploy
 
-python manage.py loaddata ui/config/config.json
-python manage.py collectstatic --noinput 
-python manage.py createsuperuser --noinput
+python manage.py collectstatic --noinput
+
+python manage.py makemigrations
 python manage.py migrate
+python manage.py loaddata ui/fixtures/config.json 
+# python manage.py createsuperuser --noinput
 gunicorn --config gunicorn_config.py config.wsgi:application
 
 cd ..
