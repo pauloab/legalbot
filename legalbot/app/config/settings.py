@@ -24,12 +24,13 @@ if DEBUG:
         ),
         override=True,
     )
+    os.environ["DATA_DIR"] = os.path.join(PROJECT_DIR, os.environ["DATA_DIR"])
+    os.environ["EMBEDING_STORAGE"] = os.path.join(
+        PROJECT_DIR, os.environ["EMBEDING_STORAGE"]
+    )
 
 
-os.environ["DATA_DIR"] = os.path.join(PROJECT_DIR, os.environ["DATA_DIR"])
-os.environ["EMBEDING_STORAGE"] = os.path.join(
-    PROJECT_DIR, os.environ["EMBEDING_STORAGE"]
-)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/

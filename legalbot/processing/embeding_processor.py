@@ -3,7 +3,7 @@ from langchain_community.embeddings.openai import OpenAIEmbeddings
 from processing.document import Document
 import os
 
-EMBEDING_STORAGE = os.path.join(os.environ.get("EMBEDING_STORAGE"))
+EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 
 
 class EmbeddingProcessor:

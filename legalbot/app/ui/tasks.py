@@ -15,7 +15,7 @@ from processing.embeding_processor import EmbeddingProcessor
 CONNECTION_STR = os.environ.get("MONGO_CONNECTION_STRING")
 DBNAME = os.environ.get("MONGO_DBNAME")
 DOCUMENT_PATH = os.environ.get("DATA_DIR")
-EMBEDING_STORAGE = os.path.join(os.environ.get("EMBEDING_STORAGE"))
+EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 
 
 @shared_task
