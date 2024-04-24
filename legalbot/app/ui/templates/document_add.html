@@ -9,13 +9,7 @@
 </div>
 <div class="page-content">
 	<form method="POST" enctype="multipart/form-data">
-		{% csrf_token %} 
-        <div style="display: flex; flex-direction: column; gap: 15px; margin: 25px;">
-         	<label for="{{form.title.name}}">{{ form.title.label }}</label>
-			<span>{{ form.title.errors }}</span>
-			<input class="form-input" type="text" name="{{form.title.name}}" placeholder="Nombre del reglamento" />
-        </div>
-       
+		{% csrf_token %}        
         <label for="{{form.file.name}}">{{ form.file.label }}</label>
 		<span>{{ form.file.errors }}</span>
         <input type="file" name="{{form.file.name}}" accept="application/pdf" />
