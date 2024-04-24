@@ -33,9 +33,12 @@ services:
 
   mongodb:
     image: mongodb/mongodb-community-server
+    env_file:
+      - ./.env/
     volumes:
       - mongo_data:/var/lib/mongodb/data/
-    
+      - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
     
   celery_worker:
     build:
