@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+cd legalbot/app
+
+celery -A config.celery  worker -l INFO 
