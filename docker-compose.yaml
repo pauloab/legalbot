@@ -10,8 +10,8 @@ services:
     volumes:
       - .:/app
       - /var/www/static/:/var/www/static/
-      - ./legalbot/storage/pdfs:/legalbot/storage/pdfs
-      - ./legalbot/storage/embedings:/legalbot/storage/embedings
+      - ./legalbot/storage/pdfs:/legalbot/storage/pdfs:rw
+      - ./legalbot/storage/embedings:/legalbot/storage/embedings:rw
     ports:
       - 8000:8000
     env_file:

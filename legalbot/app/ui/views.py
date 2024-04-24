@@ -20,7 +20,7 @@ import os
 CONNECTION_STR = os.environ.get("MONGO_CONNECTION_STRING")
 DBNAME = os.environ.get("MONGO_DBNAME")
 DOCUMENT_PATH = os.environ.get("DATA_DIR")
-
+EMBEDING_STORAGE= os.environ.get("EMBEDING_STORAGE")
 
 class Index(LoginView):
     """
@@ -120,7 +120,7 @@ class DocumentDelete(LoginRequiredMixin, View):
                 request, messages.INFO, "No se encontro el documento solicitado"
             )
             return redirect("documents")
-        ep = EmbeddingProcessor()
+        ep = EmbeddingProcessor(embedding_storage=EMBEDING_STORAGE)
         ep.delete_index(document.filename)
         os.remove(os.path.join(DOCUMENT_PATH, document.filename))
         storage.delete_document(document.filename)
