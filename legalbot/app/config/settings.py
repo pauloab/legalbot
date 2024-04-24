@@ -157,4 +157,17 @@ if not DEBUG:
     INSTALLED_APPS.append('corsheaders')
     MIDDLEWARE.append('corsheaders.middleware.CorsMiddleware')
     CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(' ')
-
+    
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
+        },
+        "root": {
+            "handlers": ["console"],
+            "level": "ERROR",
+        },
+    }
