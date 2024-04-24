@@ -55,7 +55,7 @@ class EmbeddingProcessor:
     def delete_index(self, filename: str):
         path = Path(os.path.join(self.embedding_storage, filename + ".pkl"))
 
-        if not path.is_file():
+        if path.is_file():
             os.remove(os.path.join(self.embedding_storage, filename + ".pkl"))
             os.remove(os.path.join(self.embedding_storage, filename + ".faiss"))
         else:
