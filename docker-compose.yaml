@@ -32,7 +32,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   mongodb:
-    image: mongodb/mongodb-community-server
+    image: mongodb
     env_file:
       - ./.env/
     volumes:
