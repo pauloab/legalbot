@@ -18,6 +18,7 @@ services:
     depends_on:
       - mongodb
       - db
+      - celery_worker
 
 
   db:
@@ -32,7 +33,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   mongodb:
-    image: mongodb
+    image: mongodb/mongodb-community-server
     env_file:
       - ./.env/
     volumes:
