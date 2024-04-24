@@ -2,6 +2,7 @@ from langchain.vectorstores.faiss import FAISS
 from langchain_community.embeddings.openai import OpenAIEmbeddings
 from processing.document import Document
 import os
+from pathlib import Path
 
 EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 
@@ -52,9 +53,9 @@ class EmbeddingProcessor:
         )
 
     def delete_index(self, filename: str):
-        if not os.path.exists(
-            os.path.join(self.embedding_storage, filename + ".pkl")
-        ):
+        path = Path(os.path.join(self.embedding_storage, filename + ".pkl"))
+
+        if not path.is_file():
             os.remove(os.path.join(self.embedding_storage, filename + ".pkl"))
             os.remove(os.path.join(self.embedding_storage, filename + ".faiss"))
         else:
