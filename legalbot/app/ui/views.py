@@ -70,7 +70,7 @@ class DocumentAdd(LoginRequiredMixin, View):
             # Extraer el archivo del form
             file = request.FILES["file"]
             # Guardar el archivo en el servidor
-            filename = "{}.pdf".format(form.cleaned_data["title"])
+            filename = file.name
             tasks.add_file.delay(file.read(), filename)
             messages.add_message(
                 request,
