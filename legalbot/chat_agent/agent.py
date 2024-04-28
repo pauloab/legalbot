@@ -9,7 +9,8 @@ import tiktoken
 
 class ChatAgent:
 
-    DEFAULT_CONTEXT = """Eres un bot de la Universidad Técnica de Machala que contesta dudas sobre normas legales internas de la universidad."""
+    DEFAULT_CONTEXT = """Eres un bot de la Universidad Técnica de Machala que contesta solamente dudas sobre normas legales internas de la universidad. 
+    Tienes prohibido contestar cualquier consulta fuera de este dominio"""
 
     CLASSIFICATION_PROMPT = """Sistema: Responde con 'SI' o 'NO'. ¿Debería consultar a los reglamentos de la universidad para responder a esta consulta?: 
     Consulta: {query}
@@ -20,6 +21,7 @@ class ChatAgent:
         "gpt-4-turbo-preview": 128000,
         "gpt-4-1106-preview": 128000,
         "gpt-4": 8192,
+        "gpt-4-turbo": 128000,
         "gpt-4-0613": 8192,
         "gpt-4-32k": 32768,
         "gpt-4-32k-0613": 32768,
@@ -40,7 +42,7 @@ class ChatAgent:
         self,
         memory: Memory,
         model_name="gpt-3.5-turbo",
-        temperature=0.7,
+        temperature=0.5,
         chatbot_context=DEFAULT_CONTEXT,
         sumarizer_model="gpt-3.5-turbo-instruct",
     ):
@@ -61,9 +63,9 @@ class ChatAgent:
     def get_chat_history(self, query: str):
 
         memory_history = self.memory.get_history()
-        if self.is_consulta(query):
-            docs_prompt = self.__document_retriever.get_document_query_prompt(query)
-            memory_history.append({"role": "system", "content": docs_prompt})
+        #if self.is_consulta(query):
+        docs_prompt = self.__document_retriever.get_document_query_prompt(query)
+        memory_history.append({"role": "system", "content": docs_prompt})
         return memory_history
 
     def chat(self, query: str):
@@ -72,7 +74,7 @@ class ChatAgent:
         token_count = self.__tokens_count(history, self.__model_name)
         if (
             token_count > self.TOKEN_LIMITS[self.__model_name]
-            or token_count > self.TOKEN_LIMITS[self.__sumarizer_model]
+            #or token_count > self.TOKEN_LIMITS[self.__sumarizer_model]
         ):
             raise ChatbotException(
                 "Parece que tu consulta es demasiado extensa. Por favor, reescribe tu consulta o reinicia la conversación."
@@ -100,6 +102,7 @@ class ChatAgent:
             "gpt-4-32k-0314",
             "gpt-4-0613",
             "gpt-4-32k-0613",
+            "gpt-4-turbo",
         }:
             tokens_per_message = 3
             tokens_per_name = 1

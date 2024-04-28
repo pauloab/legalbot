@@ -1,5 +1,6 @@
 from langchain.vectorstores.faiss import FAISS
 from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain.llms.openai import OpenAI
 from processing.document import Document, DocumentChunk
 from langchain_core.documents.base import Document as LangchainDocument
 
@@ -11,10 +12,14 @@ EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 class DocumentRetriever:
 
     DEFAULR_RETRIEVER_PROMPT = """Para tu respuesta, considera SOLAMENTE los siguientes extractos de normativa interna
-    y responde con el formato: 'De acuerdo al Art. (numero) del (nombre del documento) "(cita exacta)".
+    y responde con el formato: 'De acuerdo al Art. (numero) del (nombre del documento) "(cita resumida)".
     Documentos Relacionados: 
     {input_docs}
+    Resumen:
     """
+
+    DEFAULT_SUMARIZATION_PROMPT = """Arma un breve resumen del siguiente articulo de normativa sin descartar 
+    el numero de articulo ni la informacion vital: {input_doc}"""
 
     def __init__(
         self,
@@ -27,6 +32,8 @@ class DocumentRetriever:
         self.embeddings = OpenAIEmbeddings()
         self.__k = k
         self.__indexes = self.__load_indexes()
+        self.__sumarizer_model_name = "gpt-3.5-turbo-instruct"
+        self.__sumarizer_model = OpenAI(model=self.__sumarizer_model_name, temperature=0.2)
 
     def __load_indexes(self):
         indexes = []
@@ -73,11 +80,17 @@ class DocumentRetriever:
                 documents.append(document)
         return documents
 
+    def __sumarize_chunk(self, chunk: DocumentChunk) -> str:
+        prompt = self.DEFAULT_SUMARIZATION_PROMPT.format(input_doc=chunk.content)
+        chunk.content = self.__sumarizer_model(prompt)
+        return chunk
+
     def get_document_query(self, query: str):
         documents_with_scores = self.search_documents(query)
         documents = self.__filter_documents_by_score(documents_with_scores)
-        chunk = self.__parse_chunk(documents)
-        return chunk
+        chunks = self.__parse_chunk(documents)
+        # chunks = [ self.__sumarize_chunk(chunk) for chunk in chunks  ]
+        return chunks
 
     def get_document_query_prompt(self, query: str):
         chunks = self.get_document_query(query)
