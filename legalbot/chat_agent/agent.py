@@ -16,6 +16,8 @@ class ChatAgent:
     Consulta: {query}
     Respuesta: """
 
+    FORMAT_PROMPT = "Tu respuesta debe estar en formato HTML, usando solamente etiquetas: p, b, i, ul, li, br, span"
+
     TOKEN_LIMITS = {
         "gpt-4-0125-preview": 128000,
         "gpt-4-turbo-preview": 128000,
@@ -65,7 +67,9 @@ class ChatAgent:
         memory_history = self.memory.get_history()
         #if self.is_consulta(query):
         docs_prompt = self.__document_retriever.get_document_query_prompt(query)
+        print(docs_prompt)
         memory_history.append({"role": "system", "content": docs_prompt})
+        memory_history.append({"role": "system", "content": self.FORMAT_PROMPT})
         return memory_history
 
     def chat(self, query: str):
@@ -83,6 +87,7 @@ class ChatAgent:
             model=self.__model_name,
             temperature=float(self.__temperature),
             messages=history,
+            max_tokens=1024,
         )
         answer = answer.choices[0].message.content
         self.memory.add_chatbot_message(answer)

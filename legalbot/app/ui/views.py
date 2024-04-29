@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
@@ -243,3 +243,19 @@ def reset_memory(request):
     memory.message_history = []
     storage.update_history(memory._id, memory.message_history)
     return redirect("/chat")
+
+def download_document(request, id):
+    storage = DocumentStorage(CONNECTION_STR, DBNAME)
+    document = storage.get_by_uuid(id)
+    if not document:
+        messages.add_message(
+            request, messages.INFO, "No se encontro el documento solicitado"
+        )
+        return redirect("documents")
+    
+    with open(os.path.join(DOCUMENT_PATH, document.filename), 'rb') as f:
+           file_data = f.read()
+        
+    response = HttpResponse(file_data, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename={filename}'.format(filename=document.filename)
+    return response

@@ -28,16 +28,13 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: left;
-    margin-left: 45px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 45px;
 }
 
-#header h1 {
+#header .page-info {
     margin: 15px;
     padding: 15px;
     border-left: 3px solid #000;
-    width: 300px;
 }
 
 /*
@@ -108,6 +105,7 @@ h1 {
     box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     overflow: hidden;
+    margin: 0 20px;
 }
 
 .page-header {
@@ -126,6 +124,15 @@ h1 {
     background: #FFF9F9;
     height: 100%;
     margin: 25px;
+}
+
+/*
+    Footer  
+*/
+
+footer {
+    padding: 20px;
+    text-align: center;
 }
 
 /*
@@ -413,4 +420,28 @@ h1 {
 
 #traininMessage {
     display: none;
+}
+
+/*
+    breakpoint
+*/
+
+@media only screen and (max-width: 680px) {
+    .page {
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 0 20px;
+    }
+
+    #page-wrapper {
+        margin: 0;
+    }
+
+    .sidenav {
+        width: 100%;
+    }
+
+    .sidenav ul {
+        width: 100%;
+    }
 }

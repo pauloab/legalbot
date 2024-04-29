@@ -53,7 +53,7 @@ class DocumentProcessor:
 
     def __chunk_documents(self):
         text_splitter = RecursiveCharacterTextSplitter(
-            separators=["Art."],
+            separators=["Art.", "Artículo", "Articulo"],
             length_function=len,
         )
 

@@ -9,6 +9,7 @@ from ui.views import (
     DocumentAdd,
     DocumentDeactivate,
     DocumentDelete,
+    download_document
 )
 
 urlpatterns = [
@@ -27,6 +28,7 @@ urlpatterns = [
         DocumentDelete.as_view(),
         name="document_delete",
     ),
+    path(r"document/download/<str:id>/", download_document, name="document_download"),
     path(r"chat/reset/", reset_memory, name="chat_reset"),
     path(r"api/chat/", ChatAPI.as_view(), name="chat_api"),
 ]

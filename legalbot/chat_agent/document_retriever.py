@@ -11,8 +11,8 @@ EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 
 class DocumentRetriever:
 
-    DEFAULR_RETRIEVER_PROMPT = """Para tu respuesta, considera SOLAMENTE los siguientes extractos de normativa interna
-    y responde con el formato: 'De acuerdo al Art. (numero) del (nombre del documento) "(cita resumida)".
+    DEFAULR_RETRIEVER_PROMPT = """Para tu respuesta, considera los siguientes extractos de normativa interna.
+    Argumenta al final, citando el/los articulos que cosnideres relevantes, indicando el reglamento, Art. y un resumen breve.
     Documentos Relacionados: 
     {input_docs}
     Resumen:

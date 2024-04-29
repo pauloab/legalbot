@@ -41,7 +41,7 @@
 				{% endif %}
 				</a></td>
 				<td>{{ document.title }}</td>
-				<td>{{ document.filename }}</td>
+				<td><a target="_blank" href="{% url 'document_download' document.id %}">{{ document.filename }}</a></td>
 				<td>
 					<a href="{% url 'document_delete' document.id %}">
 						<svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
