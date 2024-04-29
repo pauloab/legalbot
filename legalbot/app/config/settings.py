@@ -1,8 +1,6 @@
 from pathlib import Path
 from django.core.management import call_command
 
-#call_command("loaddata", "config.json")
-
 import sys, os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,11 +10,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_DIR = BASE_DIR.parent
 sys.path.append(str(PROJECT_DIR))
 
-DEBUG = os.environ.get("DEBUG", False) == "True"
+DEBUG = str(os.environ.get("DEBUG", True)) == "True"
 
 if DEBUG:
 
-    from dotenv import find_dotenv, load_dotenv, dotenv_values
+    from dotenv import find_dotenv, load_dotenv,  dotenv_values
 
     load_dotenv(
         find_dotenv(
@@ -29,8 +27,7 @@ if DEBUG:
         PROJECT_DIR, os.environ["EMBEDING_STORAGE"]
     )
 
-
-
+    
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
