@@ -67,7 +67,6 @@ class ChatAgent:
         memory_history = self.memory.get_history()
         #if self.is_consulta(query):
         docs_prompt = self.__document_retriever.get_document_query_prompt(query)
-        print(docs_prompt)
         memory_history.append({"role": "system", "content": docs_prompt})
         memory_history.append({"role": "system", "content": self.FORMAT_PROMPT})
         return memory_history
