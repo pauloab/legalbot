@@ -4,6 +4,8 @@ from chat_agent.memory import Memory
 from chat_agent.exceptions import ChatbotException
 from processing.document import Document
 from chat_agent.document_retriever import DocumentRetriever
+from chat_agent.stat import Stat
+from chat_agent.stats_storage import StatsStorage
 import tiktoken
 
 
@@ -43,6 +45,7 @@ class ChatAgent:
     def __init__(
         self,
         memory: Memory,
+        stats_storage: StatsStorage,
         model_name="gpt-3.5-turbo",
         temperature=0.5,
         chatbot_context=DEFAULT_CONTEXT,
@@ -56,6 +59,7 @@ class ChatAgent:
         self.__sumarizer_model = sumarizer_model
         self.__sumarizer = langchainOpenAI(model_name=sumarizer_model, temperature=0)
         self.memory = memory
+        self.stats_storage = stats_storage
 
     def is_consulta(self, query: str):
         prompt = self.CLASSIFICATION_PROMPT.format(query=query)
@@ -65,32 +69,11 @@ class ChatAgent:
     def get_chat_history(self, query: str):
 
         memory_history = self.memory.get_history()
-        #if self.is_consulta(query):
+        # if self.is_consulta(query):
         docs_prompt = self.__document_retriever.get_document_query_prompt(query)
         memory_history.append({"role": "system", "content": docs_prompt})
         memory_history.append({"role": "system", "content": self.FORMAT_PROMPT})
         return memory_history
-
-    def chat(self, query: str):
-        self.memory.add_human_message(query)
-        history = self.get_chat_history(query)
-        token_count = self.__tokens_count(history, self.__model_name)
-        if (
-            token_count > self.TOKEN_LIMITS[self.__model_name]
-            #or token_count > self.TOKEN_LIMITS[self.__sumarizer_model]
-        ):
-            raise ChatbotException(
-                "Parece que tu consulta es demasiado extensa. Por favor, reescribe tu consulta o reinicia la conversación."
-            )
-        answer = self.__client.chat.completions.create(
-            model=self.__model_name,
-            temperature=float(self.__temperature),
-            messages=history,
-            max_tokens=1024,
-        )
-        answer = answer.choices[0].message.content
-        self.memory.add_chatbot_message(answer)
-        return answer
 
     def __tokens_count(self, messages, model):
         try:
@@ -130,3 +113,36 @@ class ChatAgent:
                     num_tokens += tokens_per_name
         num_tokens += 3
         return num_tokens
+
+    def chat(self, query: str):
+        self.memory.add_human_message(query)
+        history = self.get_chat_history(query)
+        token_count = self.__tokens_count(history, self.__model_name)
+        if (
+            token_count
+            > self.TOKEN_LIMITS[self.__model_name]
+            # or token_count > self.TOKEN_LIMITS[self.__sumarizer_model]
+        ):
+            raise ChatbotException(
+                "Parece que tu consulta es demasiado extensa. Por favor, reescribe tu consulta o reinicia la conversación."
+            )
+        answer = self.__client.chat.completions.create(
+            model=self.__model_name,
+            temperature=float(self.__temperature),
+            messages=history,
+            max_tokens=1024,
+        )
+        answer = answer.choices[0].message.content
+        self.memory.add_chatbot_message(answer)
+        stats = Stat(
+            userId=self.memory.userId,
+            context=self.memory.context,
+            documents_prompt=self.__document_retriever.get_document_query_prompt(query),
+            user_prompt=query,
+            user_prompt_tokens=token_count,
+            chat_response=answer,
+            chat_response_tokens=self.__tokens_count([{"": answer}], self.__model_name),
+            model=self.__model_name,
+        )
+        self.stats_storage.add(stats)
+        return answer

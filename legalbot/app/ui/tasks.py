@@ -3,6 +3,7 @@ from chat_agent.memory_storage import MemoryStorage
 from chat_agent.memory import Memory
 from chat_agent.agent import ChatAgent
 from chat_agent.exceptions import ChatbotException
+from chat_agent.stats_storage import StatsStorage
 from processing.pdf_utils import load_pdf, get_text_by_page
 import os
 import traceback
@@ -27,11 +28,11 @@ def send_chat_message(
 ):
     mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
     memory = mem_storage.get_by_userId(user_id)
-
+    stats_storage = StatsStorage(CONNECTION_STR, DBNAME)
     try:
         if not memory:
             raise Exception("Memoria inexistente")
-        chatbot = ChatAgent(memory, model, temperature, memory.context)
+        chatbot = ChatAgent(memory, stats_storage, model, temperature, memory.context)
         answer = chatbot.chat(query)
         mem_storage.update_history(memory._id, memory.message_history)
     except ChatbotException as ex:

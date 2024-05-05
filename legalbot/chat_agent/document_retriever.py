@@ -12,7 +12,7 @@ EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
 class DocumentRetriever:
 
     DEFAULR_RETRIEVER_PROMPT = """Para tu respuesta, considera los siguientes extractos de normativa interna.
-    Argumenta al final, citando el/los articulos que cosnideres relevantes, indicando el reglamento, Art. y un resumen breve.
+    Argumenta al final, citando siempre el o los articulos que cosnideres relevantes, indicando el reglamento y articulo
     Documentos Relacionados: 
     {input_docs}
     Resumen:
@@ -33,7 +33,9 @@ class DocumentRetriever:
         self.__k = k
         self.__indexes = self.__load_indexes()
         self.__sumarizer_model_name = "gpt-3.5-turbo-instruct"
-        self.__sumarizer_model = OpenAI(model=self.__sumarizer_model_name, temperature=0.2)
+        self.__sumarizer_model = OpenAI(
+            model=self.__sumarizer_model_name, temperature=0.2
+        )
 
     def __load_indexes(self):
         indexes = []
