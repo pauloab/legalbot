@@ -5,7 +5,7 @@ class Memory:
         context: str,
         userId: str,
         _id: str = None,
-        k=4,
+        k=2,
         human_name="Humano",
         chatbot_name="LegalBot",
         message_history=[],

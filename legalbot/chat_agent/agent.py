@@ -26,6 +26,7 @@ class ChatAgent:
         "gpt-4-1106-preview": 128000,
         "gpt-4": 8192,
         "gpt-4-turbo": 128000,
+        "gpt-4-turbo-2024-04-09": 128000,
         "gpt-4-0613": 8192,
         "gpt-4-32k": 32768,
         "gpt-4-32k-0613": 32768,
@@ -90,6 +91,7 @@ class ChatAgent:
             "gpt-4-0613",
             "gpt-4-32k-0613",
             "gpt-4-turbo",
+            "gpt-4-turbo-2024-04-09",
         }:
             tokens_per_message = 3
             tokens_per_name = 1
@@ -130,7 +132,6 @@ class ChatAgent:
             model=self.__model_name,
             temperature=float(self.__temperature),
             messages=history,
-            max_tokens=1024,
         )
         answer = answer.choices[0].message.content
         self.memory.add_chatbot_message(answer)

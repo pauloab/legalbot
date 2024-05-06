@@ -20,7 +20,8 @@ import os
 CONNECTION_STR = os.environ.get("MONGO_CONNECTION_STRING")
 DBNAME = os.environ.get("MONGO_DBNAME")
 DOCUMENT_PATH = os.environ.get("DATA_DIR")
-EMBEDING_STORAGE= os.environ.get("EMBEDING_STORAGE")
+EMBEDING_STORAGE = os.environ.get("EMBEDING_STORAGE")
+
 
 class Index(LoginView):
     """
@@ -217,6 +218,38 @@ class ChatAPI(View):
         return JsonResponse(http_response, safe=False, status=http_response["status"])
 
 
+def chat_no_callback(request):
+    json_req = None
+    http_response = {}
+
+    try:
+        json_req = json.loads(request.body.decode())
+        if not validators.is_chatbot_question_valid(json_req):
+            json_req = None
+            raise ValueError()
+    except ValueError:
+        http_response["response"] = "Objeto JSON no válido"
+        http_response["status"] = 400
+    if json_req:
+        user_id = request.user.id
+        contexto = models.Configuracion.objects.get(clave="contexto").valor
+        modelo = models.Configuracion.objects.get(clave="modelo").valor
+        temperature = models.Configuracion.objects.get(clave="temperatura").valor
+        mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
+        memory = mem_storage.get_by_userId(user_id)
+        if not memory:
+            memory = Memory(context=contexto, userId=user_id)
+            memory._id = mem_storage.add(memory)
+        answer = tasks.send_chat_message(
+            user_id, json_req["question"], modelo, temperature
+        )
+        memory.task_id = None
+        mem_storage.set_task_id(memory._id, memory.task_id)
+        http_response["response"] = answer
+        http_response["status"] = 200
+    return JsonResponse(http_response, safe=False, status=http_response["status"])
+
+
 class Chat(LoginRequiredMixin, View):
     """
     Retorna el template renderizado de la vista de probar chat
@@ -244,6 +277,7 @@ def reset_memory(request):
     storage.update_history(memory._id, memory.message_history)
     return redirect("/chat")
 
+
 def download_document(request, id):
     storage = DocumentStorage(CONNECTION_STR, DBNAME)
     document = storage.get_by_uuid(id)
@@ -252,10 +286,12 @@ def download_document(request, id):
             request, messages.INFO, "No se encontro el documento solicitado"
         )
         return redirect("documents")
-    
-    with open(os.path.join(DOCUMENT_PATH, document.filename), 'rb') as f:
-           file_data = f.read()
-        
-    response = HttpResponse(file_data, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename={filename}'.format(filename=document.filename)
+
+    with open(os.path.join(DOCUMENT_PATH, document.filename), "rb") as f:
+        file_data = f.read()
+
+    response = HttpResponse(file_data, content_type="application/vnd.ms-excel")
+    response["Content-Disposition"] = "attachment; filename={filename}".format(
+        filename=document.filename
+    )
     return response

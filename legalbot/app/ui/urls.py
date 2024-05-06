@@ -4,12 +4,13 @@ from ui.views import (
     Logout,
     Chat,
     ChatAPI,
+    chat_no_callback,
     reset_memory,
     DocumentsList,
     DocumentAdd,
     DocumentDeactivate,
     DocumentDelete,
-    download_document
+    download_document,
 )
 
 urlpatterns = [
@@ -31,4 +32,5 @@ urlpatterns = [
     path(r"document/download/<str:id>/", download_document, name="document_download"),
     path(r"chat/reset/", reset_memory, name="chat_reset"),
     path(r"api/chat/", ChatAPI.as_view(), name="chat_api"),
+    path(r"api/chat/nocallback/", chat_no_callback),
 ]
