@@ -138,7 +138,7 @@ class ChatAPI(View):
     """
 
     MAX_INTERACTIONS = 5
-    FORM_URL = "https://forms.gle/7g7j9qyJXs6yQkRv6"
+    FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSerhF9ABz6V-i7VpudENvIWSipjgMHB7YW6SzFl2Vnidha0Og/viewform?usp=sf_link"
     FINAL_MESSAGE = """
             Gracias por colaborar en nuestro proyecto!. Haz alcanzado el límite de interacciones con
             el bot. Para finalizar, por favor completa la siguiente encuesta de satisfacción. <br>
@@ -179,7 +179,7 @@ class ChatAPI(View):
                     storage.set_task_id(memory._id, memory.task_id)
                     if not request.user.is_staff and memory.message_history.__len__() >= self.MAX_INTERACTIONS*2:
                         request.session["limit_reached"] = True
-                    response += "<br><br>" + self.FINAL_MESSAGE
+                        response += "<br><br>" + self.FINAL_MESSAGE
                 elif answer.failed():
                     waiting = False
                     response = answer.result.message
