@@ -7,7 +7,9 @@
 {% block content %}
 <div class="page-header" style="justify-content: space-between;">
 	<h2 class="page-title">Asistente Legal</h2>
+	{% if request.user.is_staff %}
 	<a href="{% url 'chat_reset' %}" class="btn-primary">Reiniciar chat</a>
+	{% endif %}
 </div>
 <div class="page-content">
 	<div class="chat chat-box">
