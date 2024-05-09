@@ -13,6 +13,7 @@ python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 python manage.py loaddata ui/fixtures/config.json 
+python manage.py import_users --csv ui/fixtures/usuarios.csv 
 # python manage.py createsuperuser --noinput
 gunicorn --config gunicorn_config.py config.wsgi:application
 #python manage.py runserver 0.0.0.0:8000
