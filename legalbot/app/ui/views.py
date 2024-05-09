@@ -138,15 +138,15 @@ class ChatAPI(View):
     Endpoint público de consulta de respuesta del chatbot
     """
 
-    MAX_INTERACTIONS = 5
+    MAX_INTERACTIONS = 3
     FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSerhF9ABz6V-i7VpudENvIWSipjgMHB7YW6SzFl2Vnidha0Og/viewform?usp=sf_link"
     FINAL_MESSAGE = """
-            Gracias por colaborar en nuestro proyecto!. Haz alcanzado el límite de interacciones con
+            <span style="color:blue; font-weight:bold;">Gracias por colaborar en nuestro proyecto!. Haz alcanzado el límite de interacciones con
             el bot. Para finalizar, por favor completa la siguiente encuesta de satisfacción. <br>
-            <a href="{url}">Ir a la encuesta</a>                                                                                         
+            <a href="{url}">Ir a la encuesta</a></span>                                                                                         
             """.format(
-                    url=FORM_URL
-            )
+        url=FORM_URL
+    )
 
     def get(self, request):
         waiting = False
@@ -178,7 +178,11 @@ class ChatAPI(View):
                     response = answer.get()
                     memory.task_id = None
                     storage.set_task_id(memory._id, memory.task_id)
-                    if not request.user.is_staff and memory.message_history.__len__() >= self.MAX_INTERACTIONS*2:
+                    if (
+                        not request.user.is_staff
+                        and memory.message_history.__len__()
+                        >= self.MAX_INTERACTIONS * 2
+                    ):
                         request.session["limit_reached"] = True
                         response += "<br><br>" + self.FINAL_MESSAGE
                 elif answer.failed():
@@ -210,14 +214,16 @@ class ChatAPI(View):
             http_response["status"] = 400
 
         if json_req:
-            
+
             if request.session.get("limit_reached", False):
                 http_response["response"] = self.FINAL_MESSAGE
-            else :                                                                                      
+            else:
                 user_id = request.user.id
                 contexto = models.Configuracion.objects.get(clave="contexto").valor
                 modelo = models.Configuracion.objects.get(clave="modelo").valor
-                temperature = models.Configuracion.objects.get(clave="temperatura").valor
+                temperature = models.Configuracion.objects.get(
+                    clave="temperatura"
+                ).valor
 
                 mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
                 memory = mem_storage.get_by_userId(user_id)

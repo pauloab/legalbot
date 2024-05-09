@@ -14,7 +14,7 @@ DEBUG = str(os.environ.get("DEBUG", True)) == "True"
 
 if DEBUG:
 
-    from dotenv import find_dotenv, load_dotenv,  dotenv_values
+    from dotenv import find_dotenv, load_dotenv, dotenv_values
 
     load_dotenv(
         find_dotenv(
@@ -27,7 +27,6 @@ if DEBUG:
         PROJECT_DIR, os.environ["EMBEDING_STORAGE"]
     )
 
-    
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "ui",
+    "import_export",
 ]
 
 MIDDLEWARE = [
@@ -151,10 +151,10 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     STATIC_ROOT = os.environ.get("STATIC_ROOT")
-    INSTALLED_APPS.append('corsheaders')
-    MIDDLEWARE.append('corsheaders.middleware.CorsMiddleware')
-    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(' ')
-    
+    INSTALLED_APPS.append("corsheaders")
+    MIDDLEWARE.append("corsheaders.middleware.CorsMiddleware")
+    CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
