@@ -31,22 +31,22 @@ class Command(BaseCommand):
                 created_users = existing_users = errors = 0
                 users_with_errors = []
                 for row in reader:
-                    if row["usuario"] and row["mail"]:
+                    if row["usuario"]:
                         try:
-                            user, created = User.objects.get_or_create(
-                                username=row["usuario"], email=row["mail"]
-                            )
-                            if created:
-                                user.first_name = row.get("nombre")
-                                user.last_name = row.get("apellido")
-                                user.is_active = (
-                                    True if row.get("habilitado") == 1 else False
-                                )
-                                user.set_password(row["contrasena"])
-                                user.save()
-                                created_users += 1
-                            else:
+                            if User.objects.filter(username=row["usuario"]).exists():
                                 existing_users += 1
+                            else:
+                                created = User.objects.create_user(
+                                    username=row["usuario"],
+                                    password=row["contrasena"],
+                                    first_name=row.get("nombre"),
+                                    last_name=row.get("apellido"),
+                                    is_active=(
+                                        True if row.get("habilitado") == 1 else False
+                                    ),
+                                )
+                                created.save()
+                                created_users += 1
                             print(
                                 "{0} - {1}".format(
                                     row["usuario"], "Created" if created else "Exist"
