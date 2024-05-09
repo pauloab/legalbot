@@ -138,39 +138,55 @@ class ChatAPI(View):
     Endpoint público de consulta de respuesta del chatbot
     """
 
+    MAX_INTERACTIONS = 5
+    FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSerhF9ABz6V-i7VpudENvIWSipjgMHB7YW6SzFl2Vnidha0Og/viewform?usp=sf_link"
+    FINAL_MESSAGE = """
+            Gracias por colaborar en nuestro proyecto!. Haz alcanzado el límite de interacciones con
+            el bot. Para finalizar, por favor completa la siguiente encuesta de satisfacción. <br>
+            <a href="{url}">Ir a la encuesta</a>                                                                                         
+            """.format(
+                    url=FORM_URL
+            )
+
     def get(self, request):
         waiting = False
         response = ""
         status = 200
 
-        storage = MemoryStorage(CONNECTION_STR, DBNAME)
-        memory = storage.get_by_userId(request.user.id)
+        if request.session.get("limit_reached", False):
+            response = self.FINAL_MESSAGE
+        else:
+            storage = MemoryStorage(CONNECTION_STR, DBNAME)
+            memory = storage.get_by_userId(request.user.id)
 
-        if not memory:
-            contexto = models.Configuracion.objects.get(clave="contexto").valor
-            memory = Memory(contexto, request.user.id)
-            memory._id = storage.add(memory)
+            if not memory:
+                contexto = models.Configuracion.objects.get(clave="contexto").valor
+                memory = Memory(contexto, request.user.id)
+                memory._id = storage.add(memory)
 
-        task_id = memory.task_id
+            task_id = memory.task_id
 
-        if task_id:
+            if task_id:
 
-            answer = AsyncResult(task_id)
+                answer = AsyncResult(task_id)
 
-            if not answer.ready():
-                waiting = True
-                response = ""
-            elif answer.successful():
-                waiting = False
-                response = answer.get()
-                memory.task_id = None
-                storage.set_task_id(memory._id, memory.task_id)
-            elif answer.failed():
-                waiting = False
-                response = answer.result.message
-                status = 500
-                memory.task_id = None
-                storage.set_task_id(memory._id, memory.task_id)
+                if not answer.ready():
+                    waiting = True
+                    response = ""
+                elif answer.successful():
+                    waiting = False
+                    response = answer.get()
+                    memory.task_id = None
+                    storage.set_task_id(memory._id, memory.task_id)
+                    if not request.user.is_staff and memory.message_history.__len__() >= self.MAX_INTERACTIONS*2:
+                        request.session["limit_reached"] = True
+                        response += "<br><br>" + self.FINAL_MESSAGE
+                elif answer.failed():
+                    waiting = False
+                    response = answer.result.message
+                    status = 500
+                    memory.task_id = None
+                    storage.set_task_id(memory._id, memory.task_id)
 
         payload = {
             "waiting": waiting,
@@ -194,27 +210,31 @@ class ChatAPI(View):
             http_response["status"] = 400
 
         if json_req:
-            user_id = request.user.id
-            contexto = models.Configuracion.objects.get(clave="contexto").valor
-            modelo = models.Configuracion.objects.get(clave="modelo").valor
-            temperature = models.Configuracion.objects.get(clave="temperatura").valor
+            
+            if request.session.get("limit_reached", False):
+                http_response["response"] = self.FINAL_MESSAGE
+            else :                                                                                      
+                user_id = request.user.id
+                contexto = models.Configuracion.objects.get(clave="contexto").valor
+                modelo = models.Configuracion.objects.get(clave="modelo").valor
+                temperature = models.Configuracion.objects.get(clave="temperatura").valor
 
-            mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
-            memory = mem_storage.get_by_userId(user_id)
+                mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
+                memory = mem_storage.get_by_userId(user_id)
 
-            if not memory:
-                memory = Memory(context=contexto, userId=user_id)
-                memory._id = mem_storage.add(memory)
+                if not memory:
+                    memory = Memory(context=contexto, userId=user_id)
+                    memory._id = mem_storage.add(memory)
 
-            task = tasks.send_chat_message.delay(
-                user_id, json_req["question"], modelo, temperature
-            )
+                task = tasks.send_chat_message.delay(
+                    user_id, json_req["question"], modelo, temperature
+                )
 
-            memory.task_id = task.task_id
-            mem_storage.set_task_id(memory._id, memory.task_id)
+                memory.task_id = task.task_id
+                mem_storage.set_task_id(memory._id, memory.task_id)
 
-            http_response["response"] = {"response": "Preguntando..."}
-            http_response["status"] = 200
+                http_response["response"] = {"response": "Preguntando..."}
+                http_response["status"] = 200
         return JsonResponse(http_response, safe=False, status=http_response["status"])
 
 
