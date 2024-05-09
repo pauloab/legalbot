@@ -41,9 +41,7 @@ class Command(BaseCommand):
                                     password=row["contrasena"],
                                     first_name=row.get("nombre"),
                                     last_name=row.get("apellido"),
-                                    is_active=(
-                                        True if row.get("habilitado") == 1 else False
-                                    ),
+                                    is_active=True,
                                 )
                                 created.save()
                                 created_users += 1
