@@ -14,7 +14,7 @@ class Memory:
         self.l = k
         self.context = context
         self.message_history = message_history
-        self.human_name = human_name
+        self.human_name = "Humano"
         self.chatbot_name = chatbot_name
         self._id = _id
         self.userId = userId
