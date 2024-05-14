@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 for row in reader:
                     if row["usuario"]:
                         try:
+                            created = None
                             if User.objects.filter(username=row["usuario"]).exists():
                                 existing_users += 1
                             else:
