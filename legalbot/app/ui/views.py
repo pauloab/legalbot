@@ -217,6 +217,7 @@ class ChatAPI(View):
 
             if request.session.get("limit_reached", False):
                 http_response["response"] = self.FINAL_MESSAGE
+                http_response["status"] = 200
             else:
                 user_id = request.user.id
                 contexto = models.Configuracion.objects.get(clave="contexto").valor
