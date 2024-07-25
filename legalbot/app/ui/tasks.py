@@ -26,6 +26,7 @@ def send_chat_message(
     model: str,
     temperature: float,
 ):
+    print("Processing chat message")
     mem_storage = MemoryStorage(CONNECTION_STR, DBNAME)
     memory = mem_storage.get_by_userId(user_id)
     stats_storage = StatsStorage(CONNECTION_STR, DBNAME)

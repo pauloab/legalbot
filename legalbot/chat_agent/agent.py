@@ -14,13 +14,15 @@ class ChatAgent:
     DEFAULT_CONTEXT = """Eres un bot de la Universidad Técnica de Machala que contesta solamente dudas sobre normas legales internas de la universidad. 
     Tienes prohibido contestar cualquier consulta fuera de este dominio"""
 
-    CLASSIFICATION_PROMPT = """Sistema: Responde con 'SI' o 'NO'. ¿Debería consultar a los reglamentos de la universidad para responder a esta consulta?: 
-    Consulta: {query}
+    CLASSIFICATION_PROMPT = """Sistema: Responde con 'SI' o 'NO' de acuerdo a la siguiente interrogante. Basado en el texto de la consulta a continuación: 
+    '{query}'
+    ¿Se requiere recurrir a reglamentos de la universidad para responderla?
     Respuesta: """
 
     FORMAT_PROMPT = "Tu respuesta debe estar en formato HTML, usando solamente etiquetas: p, b, i, ul, li, br, span"
 
     TOKEN_LIMITS = {
+        "gpt-4o-mini":128000,
         "gpt-4-0125-preview": 128000,
         "gpt-4-turbo-preview": 128000,
         "gpt-4-1106-preview": 128000,
@@ -92,6 +94,7 @@ class ChatAgent:
             "gpt-4-32k-0613",
             "gpt-4-turbo",
             "gpt-4-turbo-2024-04-09",
+            "gpt-4o-mini"
         }:
             tokens_per_message = 3
             tokens_per_name = 1
