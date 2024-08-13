@@ -133,13 +133,16 @@ class ChatAgent:
             raise ChatbotException(
                 "Parece que tu consulta es demasiado extensa. Por favor, reescribe tu consulta o reinicia la conversación."
             )
+        print("Chat Started")
         answer = self.__client.chat.completions.create(
             model=self.__model_name,
             temperature=float(self.__temperature),
             messages=history,
         )
+        print("Chat Ended")
         answer = answer.choices[0].message.content
         self.memory.add_chatbot_message(answer)
+        """
         stats = Stat(
             userId=self.memory.userId,
             context=self.memory.context,
@@ -151,4 +154,5 @@ class ChatAgent:
             model=self.__model_name,
         )
         self.stats_storage.add(stats)
+        """
         return answer
