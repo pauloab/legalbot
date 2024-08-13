@@ -58,10 +58,12 @@ class DocumentRetriever:
         return faiss_index
 
     def search_documents(self, query):
+        print("Searching documents: ", query)
         return self.__indexes.similarity_search_with_score(
             query,
             k=self.__k,
         )
+
 
     def __parse_chunk(self, faiss_docs: LangchainDocument) -> list[DocumentChunk]:
         chunks = []

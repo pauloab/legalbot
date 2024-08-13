@@ -22,6 +22,7 @@ class ChatAgent:
     FORMAT_PROMPT = "Tu respuesta debe estar en formato HTML, usando solamente etiquetas: p, b, i, ul, li, br, span"
 
     TOKEN_LIMITS = {
+        "gpt-4o": 128000,
         "gpt-4o-mini":128000,
         "gpt-4-0125-preview": 128000,
         "gpt-4-turbo-preview": 128000,
@@ -95,6 +96,7 @@ class ChatAgent:
             "gpt-4-turbo",
             "gpt-4-turbo-2024-04-09",
             "gpt-4o-mini"
+            "gpt-4o",
         }:
             tokens_per_message = 3
             tokens_per_name = 1

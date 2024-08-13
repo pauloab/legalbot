@@ -4,7 +4,7 @@
 		"pk": 1,
 		"fields": {
 			"clave": "modelo",
-			"valor": "gpt-4-turbo"
+			"valor": "gpt-4o"
 		}
 	},
 	{
@@ -20,7 +20,7 @@
 		"pk": 3,
 		"fields": {
 			"clave": "temperatura",
-			"valor": "0.5"
+			"valor": "0.4"
 		}
 	}
 ]
