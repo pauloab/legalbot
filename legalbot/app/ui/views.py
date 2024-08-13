@@ -231,7 +231,7 @@ class ChatAPI(View):
 
                 if not memory:
                     memory = Memory(context=contexto, userId=user_id)
-                    memory._id = mem_storage.add(memory)
+                    memory._id = mem_storage.add(memory).inserted_id
 
                 task = tasks.send_chat_message.delay(
                     user_id, json_req["question"], modelo, temperature
