@@ -30,7 +30,7 @@ class EmbeddingProcessor:
 
         embeddings = OpenAIEmbeddings()
         vectorStore = FAISS.from_texts(chunks, embeddings, metadatas=metadatas)
-        vectorStore.save_local(os.path.join(self.embedding_storage, doc.filename))
+        vectorStore.save_local(self.embedding_storage, doc.filename)
 
     def deactivate_index(self, filename: str):
         os.rename(

@@ -46,10 +46,10 @@ class DocumentRetriever:
         for filename in os.listdir(EMBEDING_STORAGE):
             if filename.endswith(".faiss"):
                 indexes.append(
-                    FAISS.load_local(os.path.join(
+                    FAISS.load_local(
                         EMBEDING_STORAGE,
-                        filename.replace(".faiss", "")),
                         self.embeddings,
+                        filename.replace(".faiss", ""),
                     )
                 )
         faiss_index = indexes[0]
