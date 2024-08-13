@@ -25,7 +25,7 @@ class DocumentRetriever:
         self,
         retriever_prompt_template=DEFAULR_RETRIEVER_PROMPT,
         score_threshold=0.5,
-        k=3,
+        k=4,
     ):
         self.template = retriever_prompt_template
         self.score_threshold = score_threshold
@@ -46,10 +46,10 @@ class DocumentRetriever:
         for filename in os.listdir(EMBEDING_STORAGE):
             if filename.endswith(".faiss"):
                 indexes.append(
-                    FAISS.load_local(
+                    FAISS.load_local(os.path.join(
                         EMBEDING_STORAGE,
+                        filename.replace(".faiss", "")),
                         self.embeddings,
-                        filename.replace(".faiss", ""),
                     )
                 )
         faiss_index = indexes[0]
